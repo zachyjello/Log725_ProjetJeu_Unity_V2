@@ -1,0 +1,80 @@
+name: Unity Build WebGL
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+env:
+  ITCH_USERNAME: zach-dev
+  ITCH_GAME_ID: ombral-escape
+
+jobs:
+  buildForWindowsAndLinux:
+    name: Build Unity Project (WebGL)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          - StandaloneLinux64 # Build a Linux 64-bit standalone.
+    outputs:
+      buildVersion: ${{ steps.buildStep.outputs.buildVersion }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - uses: actions/cache@v3
+        with:
+          path: Library
+          key:
+            Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**',
+            'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.targetPlatform }}-
+            Library-
+
+      - name: Build with Unity
+        uses: game-ci/unity-builder@v4
+        id: buildStep
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+          versioning: Semantic
+
+      - name: Upload WebGL build
+        uses: actions/upload-artifact@v4
+        with:
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}
+
+  deploy:
+      name: Upload to Itch
+      runs-on: ubuntu-latest
+      strategy:
+        fail-fast: true
+        matrix:
+          channel:
+            - windows
+            - webgl
+      steps:
+        - uses: actions/download-artifact@v2.0.8
+          with:
+            name: ${{ matrix.channel }}
+            path: build/${{ matrix.channel }}
+        - uses: KikimoraGames/itch-publish@v0.0.3
+          with:
+            butlerApiKey: ${{secrets.BUTLER_API_KEY}}
+            gameData: ./build/${{ matrix.template }}
+            itchUsername: ${{env.ITCH_USERNAME}}
+            itchGameId: ${{ env.ITCH_GAME_ID }}
+            buildChannel: ${{ matrix.channel }}
+            buildNumber: ${{ needs.version.outputs.version_hash }}
