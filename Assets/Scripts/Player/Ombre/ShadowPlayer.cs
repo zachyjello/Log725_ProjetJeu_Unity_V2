@@ -44,6 +44,9 @@ public class ShadowPlayer : NetworkBehaviour
     private GameObject _shadowCircle;
     public float shadowCircleRadius = 0.5f;
 
+    private float _lastLightCheck = 0f;
+    private const float LIGHT_CHECK_INTERVAL = 0.1f;
+
     //private float _originalControllerHeight;
     //private Vector3 _originalControllerCenter;
 
@@ -111,13 +114,6 @@ public class ShadowPlayer : NetworkBehaviour
         gameObject.SetActive(true);
         //_lightSources.AddRange(FindObjectsOfType<MonoBehaviour>().OfType<ILightSource>());
 
-        // DEBUG : Afficher combien de sources de lumière ont été trouvées
-        Debug.Log($"[ShadowPlayer] {_lightSources.Count} sources de lumière détectées :");
-        foreach (var light in _lightSources)
-        {
-            Debug.Log($"  - {light.GetType().Name} (Gardien={light.IsGuardianLight()})");
-        }
-
         _animator = GetComponentInChildren<Animator>();
         _controller = GetComponent<ThirdPersonController>();
         _characterController = GetComponent<CharacterController>();
@@ -149,6 +145,23 @@ public class ShadowPlayer : NetworkBehaviour
             GameUIManager.Instance.SetPlayerRole(true); // true = Ombre
             Debug.Log("[ShadowPlayer] Enregistré auprès de GameUIManager");
         }
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+
+        // Wait a frame for all network objects to be ready
+        StartCoroutine(InitializeLightSources());
+    }
+
+    IEnumerator InitializeLightSources()
+    {
+        // Wait for end of frame to ensure all spawned objects are registered
+        yield return new WaitForEndOfFrame();
+
+        _lightSources.Clear();
+        _lightSources.AddRange(FindObjectsOfType<MonoBehaviour>().OfType<ILightSource>());
     }
     void CreateShadowCircle()
     {
@@ -184,7 +197,6 @@ public class ShadowPlayer : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        UpdateLightSources();
         // Détection de lumière sur le serveur ET le joueur local
         if (isServer || isLocalPlayer)
         {
@@ -285,7 +297,6 @@ public class ShadowPlayer : NetworkBehaviour
             _controller.JumpHeight = 0;
         }
 
-        Debug.Log("Player is now in shadow form (invisible).");
         inDiving = false;
     }
 
@@ -327,36 +338,16 @@ public class ShadowPlayer : NetworkBehaviour
             _controller.JumpHeight = originalJumpHeight;
         }
 
-        Debug.Log("Player emerged from shadow.");
         inDiving = false;
     }
-
-    private void UpdateLightSources()
-    {
-        // Actualiser la liste toutes les secondes (pas à chaque frame pour la performance)
-        if (Time.time - _lastLightSourceUpdate > LIGHT_SOURCE_UPDATE_INTERVAL)
-        {
-            _lastLightSourceUpdate = Time.time;
-
-            _lightSources.Clear();
-            _lightSources.AddRange(FindObjectsOfType<MonoBehaviour>().OfType<ILightSource>());
-
-            if (_lightSources.Count > 0)
-            {
-                Debug.Log($"[ShadowPlayer] {_lightSources.Count} source(s) de lumière détectée(s) :");
-                foreach (var light in _lightSources)
-                {
-                    Debug.Log($"  - {light.GetType().Name} (GameObject: {((MonoBehaviour)light).gameObject.name}, Gardien={light.IsGuardianLight()})");
-                }
-            }
-        }
-    }
-
 
     private void InLightCheck()
     {
         bool inLight = false;
         bool inEnemyLight = false;
+
+        if (Time.time - _lastLightCheck < LIGHT_CHECK_INTERVAL)
+            return;
 
         foreach (var lightSource in _lightSources)
         {
@@ -370,8 +361,6 @@ public class ShadowPlayer : NetworkBehaviour
                 Vector3 directionToPlayer = (transform.position - lightSource.GetLightPosition()).normalized;
                 float distance = Vector3.Distance(transform.position, lightSource.GetLightPosition());
 
-                Debug.Log($"[ShadowPlayer] {lightSource.GetType().Name}: InLight={playerInThisLight}, Distance={distance:F2}m, IsGuardian={lightSource.IsGuardianLight()}");
-
                 // Vérifier qu'il n'y a pas d'obstacle entre la lumière et le joueur
                 if (!Physics.Raycast(lightSource.GetLightPosition(), directionToPlayer, distance, blockingLayers))
                 {
@@ -380,13 +369,8 @@ public class ShadowPlayer : NetworkBehaviour
                     if (lightSource.IsGuardianLight())
                     {
                         inEnemyLight = true;
-                        Debug.LogWarning($"[ShadowPlayer] DANS LA LUMIÈRE ENNEMIE : Health: {health:F1}/{maxHealth}");
                         break; // Pas besoin de vérifier les autres
                     }
-                }
-                else
-                {
-                    Debug.Log($"[ShadowPlayer] Lumière bloquée par un obstacle"); // Ici source de pb si layer sol mise dans le champ
                 }
             }
         }
@@ -419,19 +403,13 @@ public class ShadowPlayer : NetworkBehaviour
     private void OnEnterLight()
     {
         if (!wasInLight)
-        {
             wasInLight = true;
-            Debug.Log("Player entered light!");
-        }
     }
 
     private void OnExitLight()
     {
         if (wasInLight)
-        {
             wasInLight = false;
-            Debug.Log("Player left light.");
-        }
     }
 
     private void OnDeath()
@@ -470,8 +448,6 @@ public class ShadowPlayer : NetworkBehaviour
     private void OnTriggerEnter(Collider collision)
     {
         if (!isServer) return; // Les triggers sont gérés par le serveur
-
-        Debug.Log("Player entered trigger.");
 
         if (collision.gameObject.CompareTag("Key") && !hasKey)
         {
