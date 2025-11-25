@@ -1,4 +1,3 @@
-
 name: Unity Build and Deploy to Itch.io
 
 on:
@@ -61,6 +60,12 @@ jobs:
           key: Library-${{ matrix.targetPlatform }}
           restore-keys: Library-
 
+      - name: Install Blender
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y blender
+          blender --version
+
       - name: Build with Unity
         uses: game-ci/unity-builder@v4
         id: buildStep
@@ -72,11 +77,17 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           versioning: Semantic
 
+      - name: Zip build
+        run: |
+          cd build/${{ matrix.targetPlatform }}
+          zip -r ../../${{ matrix.targetPlatform }}.zip .
+          cd ../..
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: Build-${{ matrix.targetPlatform }}
-          path: build/${{ matrix.targetPlatform }}
+          path: ${{ matrix.targetPlatform }}.zip
 
   deploy:
     name: Upload to Itch.io
@@ -93,7 +104,12 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: Build-${{ matrix.targetPlatform }}
-          path: build/${{ matrix.channel }}
+          path: .
+
+      - name: Unzip build
+        run: |
+          mkdir -p build/${{ matrix.channel }}
+          unzip ${{ matrix.targetPlatform }}.zip -d build/${{ matrix.channel }}
           
       - uses: KikimoraGames/itch-publish@v0.0.3
         with:
