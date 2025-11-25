@@ -6,6 +6,8 @@
 
  Priorité 1
  - ~~Fixer le problèmes de git lfs et créer un nouveau repos clean~~
+ - ~~Ajouter une boucle CI/CD~~
+ - Améliorer les performances du jeu
  - Fixer les problèmes d'ombres en diminuant les textures de la deuxième map et en modifiant les paramètres des lumières pour limiter la création de shadow maps
  - Fixer les problèmes de spawn liés au networking pour avoir une meilleure fiabilité avec le multijoueur
  - Fixer le spawn des clés
