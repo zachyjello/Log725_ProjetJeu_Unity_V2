@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,7 +9,7 @@ public class FlashlightBattery : MonoBehaviour
     private float currentBatteryLife;
     [SerializeField] private bool BatteryEnabled = true;
 
-    [Header("Référence au light component")]
+    [Header("RÃ©fÃ©rence au light component")]
     [SerializeField] private Light flashLight; // Lier au composant
 
 
@@ -18,22 +18,33 @@ public class FlashlightBattery : MonoBehaviour
     {
         currentBatteryLife = maxBatteryLife;
 
-        // Si la batterie est pas assignée dans l'inspector, essaye de récupérer le composant Light attaché au même GameObject
+        // Si la batterie est pas assignÃ©e dans l'inspector, essaye de rÃ©cupÃ©rer le composant Light attachÃ© au mÃªme GameObject
         if (flashLight == null)
         {
             flashLight = GetComponent<Light>();
+        }
+
+        ChargingStation[] chargingStations = FindObjectsOfType<ChargingStation>();
+
+        foreach (var station in chargingStations)
+        {
+            GamePlayer gp = GetComponentInParent<GamePlayer>();
+            if (gp != null && gp.isLocalPlayer && gp.PlayerRole == Role.Gardien)
+            {
+                station.AddBattery(this);
+            }
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Vérifie l'état de la lampe ET décharge immédiatement dans la même frame
+        // VÃ©rifie l'Ã©tat de la lampe ET dÃ©charge immÃ©diatement dans la mÃªme frame
         if (flashLight != null && BatteryEnabled && flashLight.enabled && currentBatteryLife > 0)
         {
             currentBatteryLife -= Time.deltaTime;
 
-            // Si batterie vide, éteindre la lampe
+            // Si batterie vide, Ã©teindre la lampe
             if (currentBatteryLife <= 0f)
             {
                 currentBatteryLife = 0f;
@@ -48,7 +59,7 @@ public class FlashlightBattery : MonoBehaviour
     }
 
 
-    // Vérifie si la lampe peut être allumée (batterie > 0)
+    // VÃ©rifie si la lampe peut Ãªtre allumÃ©e (batterie > 0)
     public bool CanTurnOnFlashlight()
     {
         return currentBatteryLife > 0f;
@@ -64,13 +75,13 @@ public class FlashlightBattery : MonoBehaviour
     public void RechargeBattery(float amount)
     {
         currentBatteryLife += amount;
-        if (currentBatteryLife > maxBatteryLife) // Laisse batterie au max si ça dépasse
+        if (currentBatteryLife > maxBatteryLife) // Laisse batterie au max si Ã§a dÃ©passe
         {
             currentBatteryLife = maxBatteryLife;
         }
     }
 
-    // Peut être plus tard pour un pouvoir, recharge complète
+    // Peut Ãªtre plus tard pour un pouvoir, recharge complÃ¨te
     public void FullRecharge()
     {
         currentBatteryLife = maxBatteryLife;

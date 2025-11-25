@@ -20,26 +20,7 @@ public class ChargingStation : MonoBehaviour
 
     void Update()
     {
-        // Trouver la batterie du joueur local
-        if (flashlightBattery == null)
-        {
-            // Chercher dans tous les FlashlightBattery actifs
-            FlashlightBattery[] allBatteries = FindObjectsOfType<FlashlightBattery>();
-
-            foreach (var battery in allBatteries)
-            {
-                // V�rifier si c'est le joueur local
-                GamePlayer gp = battery.GetComponentInParent<GamePlayer>();
-                if (gp != null && gp.isLocalPlayer && gp.PlayerRole == Role.Gardien)
-                {
-                    flashlightBattery = battery;
-                    Debug.Log("[ChargingStation] Batterie du joueur local trouv�e!");
-                    break;
-                }
-            }
-
-            if (flashlightBattery == null) return; // Pas encore trouv�
-        }
+        if (flashlightBattery == null) return;
 
         // V�rifier si le joueur est � port�e
         float distance = Vector3.Distance(transform.position, flashlightBattery.transform.position);
@@ -134,5 +115,10 @@ public class ChargingStation : MonoBehaviour
     {
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
+    }
+
+    public void AddBattery(FlashlightBattery battery)
+    {
+        flashlightBattery = battery;
     }
 }
