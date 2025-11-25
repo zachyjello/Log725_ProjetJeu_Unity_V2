@@ -19,11 +19,19 @@ jobs:
       fail-fast: false
       matrix:
         targetPlatform:
-          - StandaloneWindows64
           - WebGL
     outputs:
       buildVersion: ${{ steps.buildStep.outputs.buildVersion }}
     steps:
+      - name: Free Disk Space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --all --force
+          df -h
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -32,10 +40,8 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: Library
-          key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
-          restore-keys: |
-            Library-${{ matrix.targetPlatform }}-
-            Library-
+          key: Library-${{ matrix.targetPlatform }}
+          restore-keys: Library-
 
       - name: Build with Unity
         uses: game-ci/unity-builder@v4
@@ -58,24 +64,17 @@ jobs:
     name: Upload to Itch.io
     runs-on: ubuntu-latest
     needs: build
-    strategy:
-      matrix:
-        include:
-          - targetPlatform: StandaloneWindows64
-            channel: windows
-          - targetPlatform: WebGL
-            channel: webgl
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: Build-${{ matrix.targetPlatform }}
-          path: build/${{ matrix.channel }}
+          name: Build-WebGL
+          path: build/webgl
           
       - uses: KikimoraGames/itch-publish@v0.0.3
         with:
           butlerApiKey: ${{ secrets.BUTLER_API_KEY }}
-          gameData: ./build/${{ matrix.channel }}
+          gameData: ./build/webgl
           itchUsername: ${{ env.ITCH_USERNAME }}
           itchGameId: ${{ env.ITCH_GAME_ID }}
-          buildChannel: ${{ matrix.channel }}
+          buildChannel: webgl
           buildNumber: ${{ needs.build.outputs.buildVersion }}
