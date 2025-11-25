@@ -1,3 +1,4 @@
+
 name: Unity Build and Deploy to Itch.io
 
 on:
@@ -19,7 +20,8 @@ jobs:
       fail-fast: false
       matrix:
         targetPlatform:
-          - WebGL
+          - StandaloneWindows64
+          - StandaloneLinux64
     outputs:
       buildVersion: ${{ steps.buildStep.outputs.buildVersion }}
     steps:
@@ -36,6 +38,22 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
+
+      - name: Create LFS file list
+        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+      - name: Restore LFS cache
+        uses: actions/cache@v3
+        id: lfs-cache
+        with:
+          path: .git/lfs
+          key: lfs-${{ hashFiles('.lfs-assets-id') }}
+
+      - name: Git LFS Pull
+        run: |
+          git lfs pull
+          git add .
+          git reset --hard
 
       - uses: actions/cache@v3
         with:
@@ -64,17 +82,24 @@ jobs:
     name: Upload to Itch.io
     runs-on: ubuntu-latest
     needs: build
+    strategy:
+      matrix:
+        include:
+          - targetPlatform: StandaloneWindows64
+            channel: windows
+          - targetPlatform: StandaloneLinux64
+            channel: linux
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: Build-WebGL
-          path: build/webgl
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/${{ matrix.channel }}
           
       - uses: KikimoraGames/itch-publish@v0.0.3
         with:
           butlerApiKey: ${{ secrets.BUTLER_API_KEY }}
-          gameData: ./build/webgl
+          gameData: ./build/${{ matrix.channel }}
           itchUsername: ${{ env.ITCH_USERNAME }}
           itchGameId: ${{ env.ITCH_GAME_ID }}
-          buildChannel: webgl
+          buildChannel: ${{ matrix.channel }}
           buildNumber: ${{ needs.build.outputs.buildVersion }}
