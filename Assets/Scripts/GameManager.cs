@@ -32,7 +32,23 @@ public class GameManager : NetworkBehaviour
 
         players = FindObjectsOfType<ShadowPlayer>().ToList();
         keySpawnLocations = FindObjectsOfType<KeySpawnLocation>().ToList();
+        Debug.Log($"Amount of players: {NetworkServer.connections.Count}");
+        StartCoroutine(WaitForPlayersAndInitialize());
+    }
 
+    private IEnumerator WaitForPlayersAndInitialize()
+    {
+        int totalPlayers = 0;
+        // Wait until players are spawned
+        while (totalPlayers != NetworkServer.connections.Count)
+        {
+            GameObject[] gameObjects = GameObject.FindGameObjectsWithTag("Player");
+            totalPlayers = gameObjects.Length;
+            players = FindObjectsOfType<ShadowPlayer>().ToList();
+            yield return new WaitForSeconds(0.5f); // Check every half second
+        }
+
+        Debug.Log($"All {players.Count} players spawned, initializing game. {totalPlayers}");
         SpawnKeys();
     }
 
@@ -77,10 +93,7 @@ public class GameManager : NetworkBehaviour
     [Server]
     void SpawnKeys()
     {
-
         keySpawnLocations.AddRange(FindObjectsOfType<KeySpawnLocation>());
-
-        Debug.Log($"Players: {players.Count}, Key spawn locations: {keySpawnLocations.Count}");
 
         // Vérifier si on a au moins 1 spawn location
         if (keySpawnLocations.Count == 0)
@@ -95,6 +108,7 @@ public class GameManager : NetworkBehaviour
         for (int i = 0; i < keysToSpawn; i++)
         {
             int choice = Random.Range(0, keySpawnLocations.Count);
+            Debug.Log($"Spawning Key at location {keySpawnLocations[choice].transform.position}");
             Instantiate(keyPrefab, keySpawnLocations[choice].transform.position, keySpawnLocations[choice].transform.rotation);
             keySpawnLocations.RemoveAt(choice); // retirer la location pour ne pas spawn dessus
             keyCount++;

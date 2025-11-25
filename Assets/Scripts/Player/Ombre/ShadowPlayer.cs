@@ -38,9 +38,6 @@ public class ShadowPlayer : NetworkBehaviour
     private Transform _modelTransform;
     private float shadowCircleGroundOffset = 1.0f;
 
-    private float _lastLightSourceUpdate = 0f;
-    private const float LIGHT_SOURCE_UPDATE_INTERVAL = 1f; // Actualiser toutes les secondes
-
     private GameObject _shadowCircle;
     public float shadowCircleRadius = 0.5f;
 

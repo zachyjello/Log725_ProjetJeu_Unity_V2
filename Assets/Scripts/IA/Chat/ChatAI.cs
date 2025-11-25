@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ChatAI : MonoBehaviour
+public class  pAI : MonoBehaviour
 {
     public float speed = 2f;          // vitesse de déplacement du Chat
     public float stopDistance = 1.5f; // distance minimale avant de s'arrêter
@@ -35,7 +35,7 @@ public class ChatAI : MonoBehaviour
             soundTimer = 0f;
 
             // Debug message
-            Debug.Log("[ChatAI] Ombre détectée → Chat commence la poursuite !");
+            // Debug.Log("[ChatAI] Ombre détectée → Chat commence la poursuite !");
         }
     }
 
@@ -46,7 +46,7 @@ public class ChatAI : MonoBehaviour
             target = null;
 
             // Debug message
-            Debug.Log("[ChatAI] Ombre hors de portée → Chat s'arrête.");
+            // Debug.Log("[ChatAI] Ombre hors de portée → Chat s'arrête.");
         }
     }
 
