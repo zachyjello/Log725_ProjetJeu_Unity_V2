@@ -1,16 +1,11 @@
 # LOG725_ProjetOmbres_Unity
 
-## Instructions rapides pour le multijoueur
-
-- Pour que le multijoueur fonctionne correctement, **lancez le jeu depuis la scène `NetworkSetup` dans Unity**.
-- Ouvrez la scène `NetworkSetup` avant de cliquer sur Play.
-- Cela initialise Mirror et la gestion des joueurs pour le lobby et la partie.
-
 ## TODO
  Présentement, il y a quelques trucs à compléter pour la remise finale qui sont assez importants
+ L'objectif principal est de rendre le jeu stable et jouable, pour au moins le rendre potable pour la remise. Ensuite, on pourra corriger des trucs plus UX.
 
  Priorité 1
- - Fixer le problèmes de git lfs et créer un nouveau repos clean
+ - ~~Fixer le problèmes de git lfs et créer un nouveau repos clean~~
  - Fixer les problèmes d'ombres en diminuant les textures de la deuxième map et en modifiant les paramètres des lumières pour limiter la création de shadow maps
  - Fixer les problèmes de spawn liés au networking pour avoir une meilleure fiabilité avec le multijoueur
  - Fixer le spawn des clés
