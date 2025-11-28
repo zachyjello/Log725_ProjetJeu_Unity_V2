@@ -5727,6 +5727,7 @@ GameObject:
   - component: {fileID: 8399834401634667953}
   - component: {fileID: 5045980635572532165}
   - component: {fileID: 4494419661812315692}
+  - component: {fileID: 7826239173803686493}
   m_Layer: 0
   m_Name: Offset Flashlight
   m_TagString: Untagged
@@ -5884,6 +5885,39 @@ MonoBehaviour:
   maxBatteryLife: 180
   BatteryEnabled: 1
   flashLight: {fileID: 5220783013253623736}
+--- !u!114 &7826239173803686493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8883693552591711158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f63ea2e505fd484193fb31c5c55ca73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0.033333335
+  baselineRate: 1
+  unreliableRedundancy: 0
+  baselineIsDelta: 1
+  debugLog: 0
+  useFixedUpdate: 0
+  target: {fileID: 2071455812170976663}
+  bufferSizeLimit: 64
+  sendRate: 30
+  positionSensitivity: 0.01
+  rotationSensitivity: 0.01
+  scaleSensitivity: 0.01
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  debugDraw: 0
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
 --- !u!1 &8920758026120997564
 GameObject:
   m_ObjectHideFlags: 0
