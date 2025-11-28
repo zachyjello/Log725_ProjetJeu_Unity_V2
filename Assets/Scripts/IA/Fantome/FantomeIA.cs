@@ -1,8 +1,8 @@
 using UnityEngine;
-using Mirror;
-using System.Collections;
+using Unity.Netcode;
 
-public class FantomePath : MonoBehaviour
+[RequireComponent(typeof(NetworkObject))]
+public class FantomePath : NetworkBehaviour
 {
     public Transform[] waypoints;   // liste des points à suivre
     public float speed = 2f;        // vitesse du fantôme
@@ -15,6 +15,9 @@ public class FantomePath : MonoBehaviour
 
     void Update()
     {
+        // Ne faire tourner la logique que sur le serveur
+        if (!IsServer) return;
+
         if (waypoints.Length == 0) return;
 
         // Déplacement vers le waypoint courant
@@ -35,7 +38,7 @@ public class FantomePath : MonoBehaviour
                 currentIndex = 0; // recommence au début (boucle)
             }
 
-            Debug.Log("[FantomePath] Nouveau waypoint : " + currentIndex);
+            Debug.Log("FantomeAI est arrivé au point : " + currentIndex);
         }
 
         // Essayer d'interagir avec une lampe proche (seulement sur le serveur)
@@ -44,8 +47,8 @@ public class FantomePath : MonoBehaviour
 
     void TryToggleNearbyLamp()
     {
-        // Ne pas tenter depuis un client non-server : la logique de changement doit se faire sur le serveur
-        if (!NetworkServer.active) return;
+        // La logique de changement doit se faire sur le serveur
+        if (!IsServer) return;
 
         if (Time.time - lastToggleTime < toggleCooldown) return;
 
@@ -55,9 +58,11 @@ public class FantomePath : MonoBehaviour
             var lamp = col.GetComponentInParent<NetworkedLampInteraction>();
             if (lamp != null)
             {
-                lamp.ServerToggleLamp(); // méthode serveur ajoutée dans NetworkedLampInteraction
+                // Appel d'une méthode serveur sur la lampe.
+                // Adaptez le nom si votre NetworkedLampInteraction utilise un ServerRpc différent.
+                lamp.ServerToggleLamp();
                 lastToggleTime = Time.time;
-                Debug.Log($"[FantomePath] Lampe togglée : {lamp.gameObject.name}");
+                Debug.Log($"Lampe intéragis par fantome : {lamp.gameObject.name}");
                 break;
             }
         }

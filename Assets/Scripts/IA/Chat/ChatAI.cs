@@ -1,6 +1,8 @@
 using UnityEngine;
+using Unity.Netcode;
 
-public class  pAI : MonoBehaviour
+[RequireComponent(typeof(NetworkObject))]
+public class ChatAI : NetworkBehaviour
 {
     public float speed = 2f;          // vitesse de déplacement du Chat
     public float stopDistance = 1.5f; // distance minimale avant de s'arrêter
@@ -13,8 +15,8 @@ public class  pAI : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        
-        // Empêcher le chat de tomber
+
+        // Empêcher le chat de tomber (local)
         if (rb != null)
         {
             rb.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
@@ -23,35 +25,37 @@ public class  pAI : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        // Ne traiter les triggers que sur le serveur
+        if (!IsServer) return;
+
         ShadowPlayer shadow = other.GetComponent<ShadowPlayer>();
         if (shadow != null)
         {
             target = other.transform;
 
-            // Jouer un bruit
-            GetComponent<AudioSource>()?.Play();
+            // Demander aux clients de jouer le son
+            PlaySoundClientRpc();
 
             // Réinitialiser le chronomètre
             soundTimer = 0f;
-
-            // Debug message
-            // Debug.Log("[ChatAI] Ombre détectée → Chat commence la poursuite !");
         }
     }
 
     void OnTriggerExit(Collider other)
     {
+        if (!IsServer) return;
+
         if (other.GetComponent<ShadowPlayer>() != null)
         {
             target = null;
-
-            // Debug message
-            // Debug.Log("[ChatAI] Ombre hors de portée → Chat s'arrête.");
         }
     }
 
     void Update()
     {
+        // Toute la logique de mouvement/son est exécutée côté serveur
+        if (!IsServer) return;
+
         if (target != null)
         {
             float distanceToTarget = Vector3.Distance(transform.position, target.position);
@@ -67,25 +71,28 @@ public class  pAI : MonoBehaviour
 
                 // Faire tourner le chat vers la cible
                 Vector3 directionToTarget = (target.position - transform.position).normalized;
-                Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+                if (directionToTarget.sqrMagnitude > 0f)
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+                }
             }
 
             // Gérer le son toutes les 3 secondes
             soundTimer += Time.deltaTime;
             if (soundTimer >= soundInterval)
             {
-                GetComponent<AudioSource>()?.Play();
+                PlaySoundClientRpc();
                 soundTimer = 0f;
             }
 
-            // Debug message
-            Debug.Log("[ChatAI] Chat poursuit l'ombre. Position actuelle : " + transform.position);
+            Debug.Log("Chat (serveur) poursuit l'ombre. Position actuelle : " + transform.position);
         }
-        else
-        {
-            // Debug message
-            //Debug.Log("[ChatAI] Chat est immobile, aucune cible.");
-        }
+    }
+
+    [ClientRpc]
+    private void PlaySoundClientRpc()
+    {
+        GetComponent<AudioSource>()?.Play();
     }
 }
