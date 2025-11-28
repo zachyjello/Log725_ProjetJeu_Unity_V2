@@ -1,57 +1,65 @@
 using UnityEngine;
+using Mirror;
 
-public class  pAI : MonoBehaviour
+[RequireComponent(typeof(NetworkIdentity))]
+public class ChatAI : NetworkBehaviour
 {
     public float speed = 2f;          // vitesse de déplacement du Chat
     public float stopDistance = 1.5f; // distance minimale avant de s'arrêter
     public float rotationSpeed = 5f;  // vitesse de rotation du chat
+    public float soundInterval = 3f;  // intervalle entre les sons (3 secondes)
+
     private Transform target;         // cible actuelle (Player Ombre)
     private float soundTimer = 0f;    // chronomètre pour le son
-    private float soundInterval = 3f; // intervalle entre les sons (3 secondes)
     private Rigidbody rb;             // composant Rigidbody
+    private AudioSource audioSource;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        
+        audioSource = GetComponent<AudioSource>();
+
         // Empêcher le chat de tomber
         if (rb != null)
         {
             rb.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
         }
+
+        Debug.Log($"[ChatAI] Start - isServer:{isServer} isClient:{isClient} isLocalPlayer:{isLocalPlayer}");
     }
 
     void OnTriggerEnter(Collider other)
     {
-        ShadowPlayer shadow = other.GetComponent<ShadowPlayer>();
-        if (shadow != null)
+        // Autorité uniquement côté serveur
+        if (!isServer) return;
+
+        if (other.TryGetComponent<ShadowPlayer>(out var shadow))
         {
             target = other.transform;
-
-            // Jouer un bruit
-            GetComponent<AudioSource>()?.Play();
-
-            // Réinitialiser le chronomètre
             soundTimer = 0f;
 
-            // Debug message
-            // Debug.Log("[ChatAI] Ombre détectée → Chat commence la poursuite !");
+            // Déclenche le son sur tous les clients
+            RpcPlaySound();
+            Debug.Log("[ChatAI] Cible détectée (server).");
         }
     }
 
     void OnTriggerExit(Collider other)
     {
-        if (other.GetComponent<ShadowPlayer>() != null)
+        if (!isServer) return;
+
+        if (other.TryGetComponent<ShadowPlayer>(out _))
         {
             target = null;
-
-            // Debug message
-            // Debug.Log("[ChatAI] Ombre hors de portée → Chat s'arrête.");
+            Debug.Log("[ChatAI] Cible perdue (server).");
         }
     }
 
     void Update()
     {
+        // IMPORTANT: toute la logique d'IA s'exécute côté serveur uniquement
+        if (!isServer) return;
+
         if (target != null)
         {
             float distanceToTarget = Vector3.Distance(transform.position, target.position);
@@ -67,25 +75,28 @@ public class  pAI : MonoBehaviour
 
                 // Faire tourner le chat vers la cible
                 Vector3 directionToTarget = (target.position - transform.position).normalized;
-                Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+                if (directionToTarget.sqrMagnitude > 0f)
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+                }
             }
 
             // Gérer le son toutes les 3 secondes
             soundTimer += Time.deltaTime;
             if (soundTimer >= soundInterval)
             {
-                GetComponent<AudioSource>()?.Play();
+                RpcPlaySound();
                 soundTimer = 0f;
             }
+        }
+    }
 
-            // Debug message
-            Debug.Log("[ChatAI] Chat poursuit l'ombre. Position actuelle : " + transform.position);
-        }
-        else
-        {
-            // Debug message
-            //Debug.Log("[ChatAI] Chat est immobile, aucune cible.");
-        }
+    [ClientRpc]
+    void RpcPlaySound()
+    {
+        // S'exécute sur les clients
+        if (audioSource != null)
+            audioSource.Play();
     }
 }

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1659333719718627168}
   - component: {fileID: -7536468969290904222}
   - component: {fileID: 8564386332284827912}
+  - component: {fileID: 4457026994739269890}
   m_Layer: 0
   m_Name: Key
   m_TagString: Key
@@ -70,6 +71,23 @@ MonoBehaviour:
   hoverAmplitude: 0.25
   hoverSpeed: 2
   rotationSpeed: 50
+--- !u!114 &4457026994739269890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645967403884143789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 1025457021
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1001 &8761034109447956815
 PrefabInstance:
   m_ObjectHideFlags: 0

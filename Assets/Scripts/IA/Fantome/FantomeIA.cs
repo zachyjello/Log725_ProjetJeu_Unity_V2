@@ -2,7 +2,8 @@ using UnityEngine;
 using Mirror;
 using System.Collections;
 
-public class FantomePath : MonoBehaviour
+[RequireComponent(typeof(NetworkIdentity))]
+public class FantomePath : NetworkBehaviour
 {
     public Transform[] waypoints;   // liste des points à suivre
     public float speed = 2f;        // vitesse du fantôme
@@ -15,7 +16,10 @@ public class FantomePath : MonoBehaviour
 
     void Update()
     {
-        if (waypoints.Length == 0) return;
+        // Ne pas exécuter la logique sur les clients non-serveur
+        if (!isServer) return;
+
+        if (waypoints == null || waypoints.Length == 0) return;
 
         // Déplacement vers le waypoint courant
         Transform target = waypoints[currentIndex];
@@ -45,7 +49,7 @@ public class FantomePath : MonoBehaviour
     void TryToggleNearbyLamp()
     {
         // Ne pas tenter depuis un client non-server : la logique de changement doit se faire sur le serveur
-        if (!NetworkServer.active) return;
+        if (!isServer) return;
 
         if (Time.time - lastToggleTime < toggleCooldown) return;
 

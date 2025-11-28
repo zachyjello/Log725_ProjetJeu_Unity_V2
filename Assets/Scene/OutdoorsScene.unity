@@ -16315,6 +16315,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ghost IA (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 3019374288445823207, guid: 7614f5aaac3357b4dad2d1eda46209db,
+        type: 3}
+      propertyPath: sceneId
+      value: 1819798377
+      objectReference: {fileID: 0}
     - target: {fileID: 3734582846023721838, guid: 7614f5aaac3357b4dad2d1eda46209db,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -20259,6 +20264,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Chat (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4686563692002913988, guid: 7b3af35114f439048985988bb65254c7,
+        type: 3}
+      propertyPath: sceneId
+      value: 1934673371
       objectReference: {fileID: 0}
     - target: {fileID: 6366131508752231963, guid: 7b3af35114f439048985988bb65254c7,
         type: 3}
@@ -24215,6 +24225,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Chat (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4686563692002913988, guid: 7b3af35114f439048985988bb65254c7,
+        type: 3}
+      propertyPath: sceneId
+      value: 1347350036
       objectReference: {fileID: 0}
     - target: {fileID: 6366131508752231963, guid: 7b3af35114f439048985988bb65254c7,
         type: 3}
@@ -36731,6 +36746,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Chat (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4686563692002913988, guid: 7b3af35114f439048985988bb65254c7,
+        type: 3}
+      propertyPath: sceneId
+      value: 3744691471
       objectReference: {fileID: 0}
     - target: {fileID: 6366131508752231963, guid: 7b3af35114f439048985988bb65254c7,
         type: 3}
@@ -50110,6 +50130,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chat
       objectReference: {fileID: 0}
+    - target: {fileID: 4686563692002913988, guid: 7b3af35114f439048985988bb65254c7,
+        type: 3}
+      propertyPath: sceneId
+      value: 3546480869
+      objectReference: {fileID: 0}
     - target: {fileID: 6366131508752231963, guid: 7b3af35114f439048985988bb65254c7,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -54993,6 +55018,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4457026994739269890, guid: 2596e7896d770bb44a8b5ef9c93a63ea,
+        type: 3}
+      propertyPath: sceneId
+      value: 4145770337
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -75648,6 +75678,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Ghost IA
+      objectReference: {fileID: 0}
+    - target: {fileID: 3019374288445823207, guid: 7614f5aaac3357b4dad2d1eda46209db,
+        type: 3}
+      propertyPath: sceneId
+      value: 577731233
       objectReference: {fileID: 0}
     - target: {fileID: 3734582846023721838, guid: 7614f5aaac3357b4dad2d1eda46209db,
         type: 3}

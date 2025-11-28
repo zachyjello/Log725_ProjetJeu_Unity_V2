@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 4956800528736329676}
   - component: {fileID: 4398181912017266297}
   - component: {fileID: 8013735925562851848}
+  - component: {fileID: 3019374288445823207}
+  - component: {fileID: 6627573440266246020}
   m_Layer: 0
   m_Name: Ghost IA
   m_TagString: Untagged
@@ -78,10 +80,64 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e753da1679a869488c32a3f00a76898, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   waypoints: []
   speed: 2
   lampInteractDistance: 1.5
   toggleCooldown: 2
+--- !u!114 &3019374288445823207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1387341492297231191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 393800167
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
+--- !u!114 &6627573440266246020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1387341492297231191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 3734582846023721838}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  onlySyncOnChangeCorrectionMultiplier: 2
+  useFixedUpdate: 0
+  rotationSensitivity: 0.01
+  positionPrecision: 0.01
+  scalePrecision: 0.01
 --- !u!1001 &2220814637481708912
 PrefabInstance:
   m_ObjectHideFlags: 0
