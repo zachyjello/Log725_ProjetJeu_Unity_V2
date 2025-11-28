@@ -16,7 +16,7 @@ public class GameManager : NetworkBehaviour
 
     public enum GameState { Loading, Playing, GameOver }
     public GameOverUI gameOverUI; // Assign in Inspector
-    [SyncVar] public int keyCount = 0; 
+    [SyncVar] public int keyCount = 0;
 
     public GameState CurrentState { get; private set; } = GameState.Playing;
     public List<ShadowPlayer> players = new();
@@ -120,7 +120,8 @@ public class GameManager : NetworkBehaviour
         {
             int choice = Random.Range(0, keySpawnLocations.Count);
             Debug.Log($"Spawning Key at location {keySpawnLocations[choice].transform.position}");
-            Instantiate(keyPrefab, keySpawnLocations[choice].transform.position, keySpawnLocations[choice].transform.rotation);
+            GameObject key = Instantiate(keyPrefab, keySpawnLocations[choice].transform.position, keySpawnLocations[choice].transform.rotation);
+            NetworkServer.Spawn(key);
             keySpawnLocations.RemoveAt(choice); // retirer la location pour ne pas spawn dessus
             keyCount++;
         }
