@@ -23,13 +23,19 @@ namespace UI.MainMenu
         private Label sfxVolumeValue;
         private Toggle sfxMuteToggle;
 
-        // Contrôles (readonly pour l'instant, à voir sur future màj)
+        // Contrï¿½les (readonly pour l'instant, ï¿½ voir sur future mï¿½j)
         private TextField forwardKey;
         private TextField backwardKey;
         private TextField leftKey;
         private TextField rightKey;
         private TextField jumpKey;
         private TextField interactKey;
+
+        // ContrÃ´les spÃ©ciaux
+        private TextField guardianFlashKey;
+        private Label guardianTiltInfo;
+        private TextField shadowTransformKey;
+
 
         private void OnEnable()
         {
@@ -41,7 +47,7 @@ namespace UI.MainMenu
             SetupEventHandlers();
             LoadSettings();
 
-            // Masquer par défaut
+            // Masquer par dï¿½faut
             Hide();
         }
 
@@ -62,13 +68,17 @@ namespace UI.MainMenu
             sfxVolumeValue = root.Q<Label>("sfx-volume-value");
             sfxMuteToggle = root.Q<Toggle>("sfx-mute-toggle");
 
-            // Contrôles
+            // Contrï¿½les
             forwardKey = root.Q<TextField>("forward-key");
             backwardKey = root.Q<TextField>("backward-key");
             leftKey = root.Q<TextField>("left-key");
             rightKey = root.Q<TextField>("right-key");
             jumpKey = root.Q<TextField>("jump-key");
             interactKey = root.Q<TextField>("interact-key");
+            guardianFlashKey = root.Q<TextField>("guardian-flashlight-key");
+            guardianTiltInfo = root.Q<Label>("guardian-tilt-info");
+            shadowTransformKey = root.Q<TextField>("shadow-transform-key");
+
         }
 
         private void SetupEventHandlers()
@@ -86,7 +96,7 @@ namespace UI.MainMenu
 
             saveButton?.RegisterCallback<ClickEvent>(evt => SaveSettings());
 
-            // Màj des valeurs de sliders
+            // Mï¿½j des valeurs de sliders
             if (musicVolumeSlider != null)
             {
                 musicVolumeSlider.pageSize = 5f;
@@ -99,7 +109,7 @@ namespace UI.MainMenu
 
             if (sfxVolumeSlider != null)
             {
-                sfxVolumeSlider.pageSize = 5f; // Vitesse de défilement
+                sfxVolumeSlider.pageSize = 5f; // Vitesse de dï¿½filement
                 sfxVolumeSlider.RegisterValueChangedCallback(evt =>
                 {
                     sfxVolumeValue.text = $"{Mathf.RoundToInt(evt.newValue)}%";
@@ -143,7 +153,7 @@ namespace UI.MainMenu
         {
             if (AudioManager.Instance == null)
             {
-                Debug.LogWarning("AudioManager n'est pas initialisé");
+                Debug.LogWarning("AudioManager n'est pas initialisï¿½");
                 return;
             }
 
@@ -177,17 +187,17 @@ namespace UI.MainMenu
         {
             if (AudioManager.Instance == null)
             {
-                Debug.LogWarning("AudioManager n'est pas initialisé");
+                Debug.LogWarning("AudioManager n'est pas initialisï¿½");
                 return;
             }
 
             // Sauvegarder via AudioManager
             AudioManager.Instance.SaveSettings();
 
-            Debug.Log("Paramètres sauvegardés");
+            Debug.Log("Paramï¿½tres sauvegardï¿½s");
 
             // Feedback visuel
-            saveButton.text = "Sauvegardé !";
+            saveButton.text = "Sauvegardï¿½ !";
             Invoke(nameof(ResetSaveButtonText), 2f);
         }
 
