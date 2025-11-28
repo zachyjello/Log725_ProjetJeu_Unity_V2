@@ -151,4 +151,14 @@ public class OffsetFlashLight : NetworkBehaviour, ILightSource
     {
         return flashlightEnabled;
     }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        ShadowPlayer[] shadows = FindObjectsOfType<ShadowPlayer>();
+        foreach (var sh in shadows)
+        {
+            sh.RegisterLightSource(this);
+        }
+    }
 }

@@ -150,6 +150,7 @@ public class ShadowPlayer : NetworkBehaviour
 
         // Wait a frame for all network objects to be ready
         StartCoroutine(InitializeLightSources());
+        Debug.Log("[ShadowPlayer] Light sources count = " + _lightSources.Count);
     }
 
     IEnumerator InitializeLightSources()
@@ -340,7 +341,7 @@ public class ShadowPlayer : NetworkBehaviour
 
     private void InLightCheck()
     {
-        Debug.Log($"[ShadowPlayer] Démarrage inlightcheck");)
+        Debug.Log($"[ShadowPlayer] Démarrage inlightcheck");
         bool inLight = false;
         bool inEnemyLight = false;
 
@@ -502,5 +503,11 @@ public class ShadowPlayer : NetworkBehaviour
         {
             health += Time.deltaTime * healthRegenRate;
         }
+    }
+
+    public void RegisterLightSource(ILightSource src)
+    {
+        if (!_lightSources.Contains(src))
+            _lightSources.Add(src);
     }
 }
