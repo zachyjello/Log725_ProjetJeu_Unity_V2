@@ -9484,6 +9484,24 @@ MonoBehaviour:
   keyPrefab: {fileID: 1645967403884143789, guid: 2596e7896d770bb44a8b5ef9c93a63ea,
     type: 3}
   bellsSound: {fileID: 8300000, guid: 5360f3a26bdfb684fb8ab88312685073, type: 3}
+  ambianceSounds:
+  - {fileID: 8300000, guid: a4a852a61cba69745900360b86bacf35, type: 3}
+  - {fileID: 8300000, guid: ac5a06700b61bb34ca776cc369a3c249, type: 3}
+  - {fileID: 8300000, guid: f887fbfaf23e83043b26610753395ff0, type: 3}
+  - {fileID: 8300000, guid: 9feb369b4e3c5be4eb6091a5f8e9e152, type: 3}
+  - {fileID: 8300000, guid: e8bb077ae8d22a64e9d240293cf8ee8f, type: 3}
+  - {fileID: 8300000, guid: 6717726800e03e7498d3501207a6fc76, type: 3}
+  - {fileID: 8300000, guid: b5594c1cb43287046ab64936eb32c52d, type: 3}
+  - {fileID: 8300000, guid: f5a5c207af359004398148d4d536a355, type: 3}
+  - {fileID: 8300000, guid: 6e529ad5118aa9449b69e8979aad2c77, type: 3}
+  - {fileID: 8300000, guid: 4fd4fed492d8fa74c82fbde64c3d1501, type: 3}
+  - {fileID: 8300000, guid: ed933d679586c3a42a875e2d2112fa21, type: 3}
+  - {fileID: 8300000, guid: 4dc08a26d0c25fe428029e2824d66d88, type: 3}
+  - {fileID: 8300000, guid: 799379543646a87459c24e08cc19abc5, type: 3}
+  - {fileID: 8300000, guid: b65756b748b0468469f4d59c94d33b9a, type: 3}
+  - {fileID: 8300000, guid: b1cb6078df9890a42909b81e320923b1, type: 3}
+  minAmbianceInterval: 20
+  maxAmbianceInterval: 50
 --- !u!4 &285599203
 Transform:
   m_ObjectHideFlags: 0

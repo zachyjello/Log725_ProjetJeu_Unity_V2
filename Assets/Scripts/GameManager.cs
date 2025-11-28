@@ -26,8 +26,13 @@ public class GameManager : NetworkBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioClip bellsSound;
-    private bool bellsSoundPlayed = false;
+    [SerializeField] private AudioClip[] ambianceSounds; // Dossier de sons d'ambiance, à prendre random
+    [SerializeField] private float minAmbianceInterval = 20f; // 20 secondes min d'intervalle pour pas overlap
+    [SerializeField] private float maxAmbianceInterval = 50f;
 
+    private bool bellsSoundPlayed = false;
+    private float nextAmbianceSoundTime = 0f;
+    private bool isInBellsZone = false; // Bloquer sons d'ambiance autour de bells
     public float GameProgress => (1f - (gameTime / maxGameTime)) * 100f;
 
     public override void OnStartServer()
@@ -59,6 +64,8 @@ public class GameManager : NetworkBehaviour
     private void Start()
     {
         gameTime = maxGameTime; // initialisation au début de la partie
+
+        ScheduleNextAmbianceSound(); // Plannifier 1er son d'ambiance
     }
 
     private void Awake()
@@ -135,11 +142,21 @@ public class GameManager : NetworkBehaviour
                 GameUIManager.Instance.SetGameProgress(progress);
             }
 
+            // Vérifier si on est dans la zone réservée pour les bells (45% à 55%)
+            isInBellsZone = (progress >= 45f && progress <= 55f);
+
             // Son cloche à 50%
             if (progress >= 50f && !bellsSoundPlayed)
             {
                 PlayBellsSound();
                 bellsSoundPlayed = true;
+            }
+
+            // Son ambiance random
+            if (Time.time >= nextAmbianceSoundTime && !isInBellsZone)
+            {
+                PlayRandomAmbianceSound();
+                ScheduleNextAmbianceSound();
             }
 
             if (gameTime <= 0) EndGameShadowsWin(false);
@@ -175,6 +192,39 @@ public class GameManager : NetworkBehaviour
         {
             Debug.LogWarning("[GameManager] AudioManager ou bellsSound manquant");
         }
+    }
+
+    private void PlayRandomAmbianceSound()
+    {
+        if (ambianceSounds == null || ambianceSounds.Length == 0)
+        {
+            Debug.LogWarning("[GameManager] Aucun son d'ambiance assigné");
+            return;
+        }
+
+        if (AudioManager.Instance == null)
+        {
+            Debug.LogWarning("[GameManager] AudioManager manquant");
+            return;
+        }
+
+        // Choisir un son aléatoire
+        int randomIndex = Random.Range(0, ambianceSounds.Length);
+        AudioClip randomSound = ambianceSounds[randomIndex];
+
+        if (randomSound != null)
+        {
+            AudioManager.Instance.PlaySFX(randomSound);
+            Debug.Log($"[GameManager] Son d'ambiance joué : {randomSound.name}");
+        }
+    }
+
+    private void ScheduleNextAmbianceSound()
+    {
+        float randomInterval = Random.Range(minAmbianceInterval, maxAmbianceInterval);
+        nextAmbianceSoundTime = Time.time + randomInterval;
+
+        Debug.Log($"[GameManager] Prochain son d'ambiance dans {randomInterval:F1} s");
     }
 
 
