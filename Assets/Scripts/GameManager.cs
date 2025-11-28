@@ -24,6 +24,10 @@ public class GameManager : NetworkBehaviour
 
     public GameObject keyPrefab;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip bellsSound;
+    private bool bellsSoundPlayed = false;
+
     public float GameProgress => (1f - (gameTime / maxGameTime)) * 100f;
 
     public override void OnStartServer()
@@ -130,7 +134,14 @@ public class GameManager : NetworkBehaviour
             {
                 GameUIManager.Instance.SetGameProgress(progress);
             }
-                
+
+            // Son cloche à 50%
+            if (progress >= 50f && !bellsSoundPlayed)
+            {
+                PlayBellsSound();
+                bellsSoundPlayed = true;
+            }
+
             if (gameTime <= 0) EndGameShadowsWin(false);
         }
     }
@@ -152,6 +163,18 @@ public class GameManager : NetworkBehaviour
             EndGameShadowsWin(false);
         if (!alive && escaped)
             EndGameShadowsWin(true);
+    }
+
+    private void PlayBellsSound()
+    {
+        if (AudioManager.Instance != null && bellsSound != null)
+        {
+            AudioManager.Instance.PlaySFX(bellsSound);
+        }
+        else
+        {
+            Debug.LogWarning("[GameManager] AudioManager ou bellsSound manquant");
+        }
     }
 
 
