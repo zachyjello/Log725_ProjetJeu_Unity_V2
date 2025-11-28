@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class OffsetFlashLight : NetworkBehaviour, ILightSource
 {
-    [Header("Réglages de la lampe")]
+    [Header("Rï¿½glages de la lampe")]
     //public GameObject FollowCam; // Camera qui suit le joueur
     [SerializeField] private float MoveSpeed = 13f; // Change vitesse de mouvement de la lampe
     [SerializeField] private float verticalRotationSpeed = 50f; // vitesse de rotation verticale
     [SerializeField] private float minVerticalAngle = -80f; // limite vers le bas
     [SerializeField] private float maxVerticalAngle = 80f;  // limite haut
-    
+
     public Light FlashLight; // Flashlight component
 
     // Gestion de la batterie
@@ -24,18 +24,25 @@ public class OffsetFlashLight : NetworkBehaviour, ILightSource
 
     private float currentVerticalAngle = 0f; // rotation verticale
 
+    // Nouveau SyncVar pour synchroniser l'Ã©tat de la lampe
+    [SyncVar(hook = nameof(OnFlashlightStateChanged))]
+    private bool flashlightEnabled = true; // Ã‰tat initial (allumÃ© par dÃ©faut, ajustez si nÃ©cessaire)
 
 
-    // Start appelé avant la première frame update
+
+    // Start appelï¿½ avant la premiï¿½re frame update
     void Start()
     {
-        batterySystem = GetComponent<FlashlightBattery>(); // Récupération infos batterie
+        batterySystem = GetComponent<FlashlightBattery>(); // Rï¿½cupï¿½ration infos batterie
+
+        // Appliquer l'Ã©tat initial de la lampe
+        FlashLight.enabled = flashlightEnabled;
     }
 
-    // Update est appelé une fois par frame
+    // Update est appelï¿½ une fois par frame
     void Update()
     {
-        // Multi : seul le joueur local peut contrôler sa lampe
+        // Multi : seul le joueur local peut contrï¿½ler sa lampe
         if (!isLocalPlayer) return;
 
         HandleFlashlightToggle();
@@ -46,27 +53,13 @@ public class OffsetFlashLight : NetworkBehaviour, ILightSource
     {
         if (Input.GetKeyDown(KeyCode.F)) // Si appuie sur F
         {
-            if (!FlashLight.enabled)
-            {
-                // Vérifie si la lampe peut être allumée (batterie > 0)
-                if (batterySystem == null || batterySystem.CanTurnOnFlashlight())
-                {
-                    FlashLight.enabled = true; // Allume la lampe
-                    Source.PlayOneShot(FlashLightOnSound); // Son clic allumage lampe
-                }
-            }
-
-            else
-            {
-                FlashLight.enabled = false;
-                Source.PlayOneShot(FlashLightOffSound); // Son clic extinction lampe
-            }
+            CmdToggleFlashlight(); // Appeler la commande pour synchroniser
         }
     }
 
     private void HandleVerticalRotation()
     {
-        // Contrôle de la molette pour inclinaison verticale du faisceau
+        // Contrï¿½le de la molette pour inclinaison verticale du faisceau
         float scrollInput = Input.GetAxis("Mouse ScrollWheel");
         if (Mathf.Abs(scrollInput) > 0.01f)
         {
@@ -77,6 +70,35 @@ public class OffsetFlashLight : NetworkBehaviour, ILightSource
         // Application de la rotation sur la lampe
         Quaternion targetRotation = Quaternion.Euler(currentVerticalAngle - 90f, 0f, 0f);
         transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, Time.deltaTime * MoveSpeed);
+    }
+
+    // Commande pour basculer l'Ã©tat sur le serveur (nÃ©cessaire pour SyncVar)
+    [Command]
+    private void CmdToggleFlashlight()
+    {
+        // VÃ©rifier la batterie : si Ã©teint, vÃ©rifier si on peut allumer ; si allumÃ©, toujours permettre d'Ã©teindre
+        if (!flashlightEnabled && (batterySystem == null || !batterySystem.CanTurnOnFlashlight()))
+        {
+            return; // Ne pas allumer si batterie vide
+        }
+
+        flashlightEnabled = !flashlightEnabled; // Basculer l'Ã©tat
+    }
+
+    // Hook appelÃ© sur tous les clients quand flashlightEnabled change
+    private void OnFlashlightStateChanged(bool oldValue, bool newValue)
+    {
+        FlashLight.enabled = newValue; // Appliquer l'Ã©tat visuel
+
+        // Jouer le son appropriÃ© (seulement sur le client local pour Ã©viter les sons multiples)
+        if (isLocalPlayer && Source != null)
+        {
+            AudioClip soundToPlay = newValue ? FlashLightOnSound : FlashLightOffSound;
+            if (soundToPlay != null)
+            {
+                Source.PlayOneShot(soundToPlay);
+            }
+        }
     }
 
     public bool IsPlayerInLight(Vector3 playerPosition)

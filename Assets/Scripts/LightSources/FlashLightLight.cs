@@ -11,7 +11,7 @@ public class FlashLightLight : MonoBehaviour, ILightSource
     {
         Vector3 toPlayer = playerPosition - transform.position;
 
-        // Flatten both vectors so Y (height) doesn’t matter as much
+        // Flatten both vectors so Y (height) doesnï¿½t matter as much
         Vector3 forwardFlat = new Vector3(transform.forward.x, 0f, transform.forward.z).normalized;
         Vector3 toPlayerFlat = new Vector3(toPlayer.x, 0f, toPlayer.z).normalized;
 
@@ -20,11 +20,13 @@ public class FlashLightLight : MonoBehaviour, ILightSource
             return false;
 
         float angleToPlayer = Vector3.Angle(forwardFlat, toPlayerFlat);
+        Debug.LogError("IsPlayerInLight: " + (angleToPlayer <= spotAngle / 2f));
         return angleToPlayer <= spotAngle / 2f;
     }
 
     public bool IsGuardianLight()
     {
+        Debug.LogError("Est dans la lumiÃ¨re du gardien ");
         return true;
     }
 
