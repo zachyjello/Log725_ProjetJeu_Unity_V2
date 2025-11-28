@@ -101,19 +101,37 @@ public class OffsetFlashLight : NetworkBehaviour, ILightSource
         }
     }
 
+    //public bool IsPlayerInLight(Vector3 playerPosition)
+    //{
+    //    if (FlashLight == null || !FlashLight.enabled)
+    //        return false;
+
+    //    float distance = Vector3.Distance(transform.position, playerPosition);
+
+    //    if (distance > FlashLight.range)
+    //        return false;
+
+    //    Vector3 directionToPlayer = (playerPosition - transform.position).normalized;
+    //    Vector3 lightDirection = transform.forward;
+
+    //    float angle = Vector3.Angle(lightDirection, directionToPlayer);
+
+    //    return angle < (FlashLight.spotAngle / 2f);
+    //}
+
+    // Modifie aussi IsPlayerInLight pour utiliser isFlashlightOn
     public bool IsPlayerInLight(Vector3 playerPosition)
     {
-        if (FlashLight == null || !FlashLight.enabled)
+        // isFlashlightOn au lieu de FlashLight.enabled
+        if (FlashLight == null || !flashlightEnabled)
             return false;
 
         float distance = Vector3.Distance(transform.position, playerPosition);
-
         if (distance > FlashLight.range)
             return false;
 
         Vector3 directionToPlayer = (playerPosition - transform.position).normalized;
         Vector3 lightDirection = transform.forward;
-
         float angle = Vector3.Angle(lightDirection, directionToPlayer);
 
         return angle < (FlashLight.spotAngle / 2f);
@@ -127,5 +145,10 @@ public class OffsetFlashLight : NetworkBehaviour, ILightSource
     public bool IsGuardianLight()
     {
         return true; // Cette lampe blesse les Ombres
+    }
+
+    public bool IsFlashlightEnabled()
+    {
+        return flashlightEnabled;
     }
 }

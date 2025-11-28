@@ -340,15 +340,27 @@ public class ShadowPlayer : NetworkBehaviour
 
     private void InLightCheck()
     {
+        Debug.Log($"[ShadowPlayer] Démarrage inlightcheck");)
         bool inLight = false;
         bool inEnemyLight = false;
 
         if (Time.time - _lastLightCheck < LIGHT_CHECK_INTERVAL)
             return;
 
+        _lastLightCheck = Time.time;
+
         foreach (var lightSource in _lightSources)
         {
             if (lightSource == null) continue;
+
+            // Cast vers OffsetFlashLight pour accéder à isFlashlightOn
+            OffsetFlashLight flashlight = lightSource as OffsetFlashLight;
+            if (flashlight != null)
+            {
+                // Vérifier si la lampe est allumée (propriété synchro)
+                if (!flashlight.IsFlashlightEnabled())
+                    continue;
+            }
 
             // Vérifier si le joueur est dans la lumière
             bool playerInThisLight = lightSource.IsPlayerInLight(transform.position);
@@ -362,10 +374,12 @@ public class ShadowPlayer : NetworkBehaviour
                 if (!Physics.Raycast(lightSource.GetLightPosition(), directionToPlayer, distance, blockingLayers))
                 {
                     inLight = true;
+                    Debug.Log($"[ShadowPlayer] Dans la lumière. inLight={inLight}");
 
                     if (lightSource.IsGuardianLight())
                     {
                         inEnemyLight = true;
+                        Debug.Log($"[ShadowPlayer] Dans la lumière ennemie. inEnemyLight={inEnemyLight}");
                         break; // Pas besoin de vérifier les autres
                     }
                 }
