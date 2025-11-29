@@ -67,6 +67,24 @@
                         <ui:TextField name="interact-key" value="E" readonly="true" class="key-input" />
                     </ui:VisualElement>
                 </ui:VisualElement>
+                <ui:VisualElement name="special-controls-section-gardien" class="settings-section">
+                    <ui:Label text="Contrôles spéciaux Gardien" class="section-title" />
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="Allumer/Éteindre lampe" class="setting-label" />
+                        <ui:TextField name="guardian-flashlight-key" value="F" readonly="true" class="key-input" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="Inclinaison du faisceau" class="setting-label" />
+                        <ui:Label name="guardian-tilt-info" text="Molette souris" class="setting-label" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="special-controls-section-ombre" class="settings-section">
+                    <ui:Label text="Contrôles spéciaux Ombre" class="section-title" />
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="Transformation" class="setting-label" />
+                        <ui:TextField name="shadow-transform-key" value="A" readonly="true" class="key-input" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
             </ui:ScrollView>
             <ui:VisualElement name="settings-footer" class="panel-footer" style="height: 64px;">
                 <ui:Button name="save-button" text="Sauvegarder" class="save-button" style="bottom: 12px;" />

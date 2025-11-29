@@ -16,7 +16,9 @@ public class GameManager : NetworkBehaviour
 
     public enum GameState { Loading, Playing, GameOver }
     public GameOverUI gameOverUI; // Assign in Inspector
-    [SyncVar] public int keyCount = 0;
+    [SyncVar] public int keysFound = 0;
+    [SyncVar] public int keysToSpawn = 0;
+    [SyncVar] public bool AllKeysFound = false;
 
     public GameState CurrentState { get; private set; } = GameState.Playing;
     public List<ShadowPlayer> players = new();
@@ -58,6 +60,7 @@ public class GameManager : NetworkBehaviour
         }
 
         Debug.Log($"All {players.Count} players spawned, initializing game. {totalPlayers}");
+
         SpawnKeys();
     }
 
@@ -114,7 +117,7 @@ public class GameManager : NetworkBehaviour
         }
 
         // Nombre de clés à spawn = min(players + 1, nombre de spawn locations)
-        int keysToSpawn = Mathf.Min(players.Count + 1, keySpawnLocations.Count);
+        keysToSpawn = Mathf.Min(players.Count + 1, keySpawnLocations.Count);
 
         for (int i = 0; i < keysToSpawn; i++)
         {
@@ -123,7 +126,17 @@ public class GameManager : NetworkBehaviour
             GameObject key = Instantiate(keyPrefab, keySpawnLocations[choice].transform.position, keySpawnLocations[choice].transform.rotation);
             NetworkServer.Spawn(key);
             keySpawnLocations.RemoveAt(choice); // retirer la location pour ne pas spawn dessus
-            keyCount++;
+        }
+
+        GameUIManager ui = GameUIManager.Instance;
+        ui.UpdateTotalKeys(keysToSpawn);
+    }
+
+    public void AddKey(){
+        keysFound++;
+        GameUIManager.Instance.KeyFound();
+        if(keysFound == keysToSpawn){
+            AllKeysFound = true;
         }
     }
 

@@ -14,7 +14,7 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private SettingsPanelManager settingsPanel;
 
     [Header("Game Settings")]
-    [SerializeField] private int totalKeys = 5;
+    [SerializeField] private int totalKeys = 3;
     [SerializeField] private bool isOmbreRole = true;
 
     [Header("Audio")]
@@ -297,6 +297,15 @@ public class GameUIManager : MonoBehaviour
         }
     }
 
+    public void UpdateTotalKeys(int i){
+        totalKeys = i;
+        UpdateKeyCounter();
+    }
+
+    public void KeyFound(){
+        keysFound++;
+        UpdateKeyCounter();
+    }
 
     private void UpdateTimer()
     {
