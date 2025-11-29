@@ -8687,7 +8687,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiDocument: {fileID: 250822525}
   settingsPanel: {fileID: 377287608}
-  totalKeys: 5
+  totalKeys: 3
   isOmbreRole: 1
   backgroundMusic: {fileID: 0}
 --- !u!1 &251358846
@@ -30455,7 +30455,7 @@ GameObject:
   - component: {fileID: 898609930}
   m_Layer: 6
   m_Name: Door
-  m_TagString: Untagged
+  m_TagString: ExitDoor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
