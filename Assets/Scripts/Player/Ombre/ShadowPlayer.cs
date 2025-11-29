@@ -12,7 +12,6 @@ public class ShadowPlayer : NetworkBehaviour
     public PlayerStatus playerStatus = PlayerStatus.Alive;
     private List<ILightSource> _lightSources = new();
     private bool wasInLight = false;
-    public bool hasKey = false;
 
     [SyncVar]
     public bool inLightSource = false;
@@ -461,13 +460,13 @@ public class ShadowPlayer : NetworkBehaviour
     {
         if (!isServer) return; // Les triggers sont gérés par le serveur
 
-        if (collision.gameObject.CompareTag("Key") && !hasKey)
+        if (collision.gameObject.CompareTag("Key"))
         {
             NetworkServer.Destroy(collision.gameObject);
-            hasKey = true;
+            GameManager.Instance.AddKey();
         }
 
-        if (collision.gameObject.CompareTag("ExitDoor") && hasKey)
+        if (collision.gameObject.CompareTag("ExitDoor") && GameManager.Instance.AllKeysFound)
         {
             playerStatus = PlayerStatus.Escaped;
 
