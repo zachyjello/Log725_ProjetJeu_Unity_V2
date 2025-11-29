@@ -12,6 +12,8 @@ namespace UI.MainMenu
         private VisualElement rulesOverlay;
         private Button backButton;
 
+        private ScrollView rulesScrollView;
+
         // Labels pour le texte
         private Label goalText;
         private Label gardienText;
@@ -83,6 +85,7 @@ Restrictions :
 
             root = uiDocument.rootVisualElement;
             InitializeElements();
+            SetupFastScroll();
             SetupEventHandlers();
             SetRulesText();
 
@@ -93,6 +96,7 @@ Restrictions :
         private void InitializeElements()
         {
             rulesOverlay = root.Q<VisualElement>("rules-overlay");
+            rulesScrollView = root.Q<ScrollView>("rules-content");
             backButton = root.Q<Button>("back-button");
 
             // Récupérer les labels de texte
@@ -100,6 +104,21 @@ Restrictions :
             gardienText = root.Q<Label>("gardien-text");
             ombresText = root.Q<Label>("ombres-text");
             fantomeText = root.Q<Label>("fantome-text");
+        }
+
+        private void SetupFastScroll()
+        {
+            if (rulesScrollView == null)
+            {
+                return;
+            }
+
+            rulesScrollView.RegisterCallback<WheelEvent>(evt =>
+            {
+                float speed = 200f;
+                rulesScrollView.verticalScroller.value += evt.delta.y * speed;
+                evt.StopPropagation(); // Stop ancien
+            });
         }
 
         private void SetupEventHandlers()

@@ -11,6 +11,8 @@ namespace UI.MainMenu
         private VisualElement root;
         private VisualElement settingsOverlay;
 
+        private ScrollView settingsScrollView;
+
         // Boutons
         private Button backButton;
         private Button saveButton;
@@ -44,6 +46,7 @@ namespace UI.MainMenu
 
             root = uiDocument.rootVisualElement;
             InitializeElements();
+            SetupFastScroll();
             SetupEventHandlers();
             LoadSettings();
 
@@ -54,6 +57,7 @@ namespace UI.MainMenu
         private void InitializeElements()
         {
             settingsOverlay = root.Q<VisualElement>("settings-overlay");
+            settingsScrollView = root.Q<ScrollView>("settings-content");
 
             // Boutons
             backButton = root.Q<Button>("back-button");
@@ -80,6 +84,22 @@ namespace UI.MainMenu
             shadowTransformKey = root.Q<TextField>("shadow-transform-key");
 
         }
+
+        private void SetupFastScroll()
+        {
+            if (settingsScrollView == null)
+            {
+                return;
+            }
+
+            settingsScrollView.RegisterCallback<WheelEvent>(evt =>
+            {
+                float speed = 200f;
+                settingsScrollView.verticalScroller.value += evt.delta.y * speed;
+                evt.StopPropagation(); // Stop ancien
+            });
+        }
+
 
         private void SetupEventHandlers()
         {
