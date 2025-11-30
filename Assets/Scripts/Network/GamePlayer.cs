@@ -1,6 +1,7 @@
 using Mirror;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 
 public class GamePlayer : NetworkBehaviour
@@ -53,7 +54,7 @@ public class GamePlayer : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         base.OnStartLocalPlayer();
-        Debug.Log($"[GamePlayer] ✓ Joueur local démarré: {playerName}, Rôle: {role}, IsOwned: {isOwned}");
+        Debug.Log($"[GamePlayer] Joueur local démarré: {playerName}, Rôle: {role}, IsOwned: {isOwned}");
 
         uiManager = FindObjectOfType<GameUIManager>();
         if (uiManager != null)
@@ -76,20 +77,17 @@ public class GamePlayer : NetworkBehaviour
         }
     }
 
-    /// <summary>
-    /// Appelé quand ce client reçoit l'autorité
-    /// Alternative à OnStartLocalPlayer en cas de problème
-    /// </summary>
+    // Appelé quand ce client reçoit l'autorité, alternative à OnStartLocalPlayer en cas de problème
     public override void OnStartAuthority()
     {
         base.OnStartAuthority();
-        Debug.Log($"[GamePlayer] ✓ AUTORITÉ REÇUE - {playerName}, IsLocal: {isLocalPlayer}, IsOwned: {isOwned}");
+        Debug.Log($"[GamePlayer] AUTORITÉ REÇUE - {playerName}, IsLocal: {isLocalPlayer}, IsOwned: {isOwned}");
 
         // Si isLocalPlayer est false mais on a l'autorité, c'est qu'on est le Host
         // Forcer le setup du joueur local
         if (!isLocalPlayer)
         {
-            Debug.LogWarning($"[GamePlayer] ⚠️ Autorité sans isLocalPlayer - Mode Host détecté, forçage setup");
+            Debug.LogWarning($"[GamePlayer] Autorité sans isLocalPlayer - Mode Host détecté, forçage setup");
 
             uiManager = FindObjectOfType<GameUIManager>();
             if (uiManager != null)
@@ -201,10 +199,5 @@ public class GamePlayer : NetworkBehaviour
         // Note: NetworkPlayerController gère l'activation du ThirdPersonController
         // On ne l'active plus ici pour éviter les conflits
         Debug.Log("[GamePlayer] Le ThirdPersonController sera géré par NetworkPlayerController");
-    }
-
-    private void Update()
-    {
-
     }
 }
