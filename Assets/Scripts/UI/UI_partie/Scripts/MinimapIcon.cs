@@ -23,14 +23,24 @@ public class MinimapIcon : NetworkBehaviour
 
     void Start()
     {
-        // Création icônes pour objets non joueurs
+        // Crï¿½ation icï¿½nes pour objets non joueurs
         if (iconType != IconType.Player)
-            TryCreateIcon();
+            StartCoroutine(TryCreateIconWhenReady());
+    }
+
+    private System.Collections.IEnumerator TryCreateIconWhenReady()
+    {
+        // Wait que le joueur local existe
+        while (NetworkClient.localPlayer == null)
+            yield return null;
+
+        if (ShouldCreateIcon())
+            CreateMinimapIcon();
     }
 
     public override void OnStartLocalPlayer()
     {
-        // Créer icône quand c'est le joueur local
+        // Crï¿½er icï¿½ne quand c'est le joueur local
         if (iconType == IconType.Player)
             TryCreateIcon();
     }
@@ -48,7 +58,7 @@ public class MinimapIcon : NetworkBehaviour
             case IconType.Player:
                 return isLocalPlayer; // Montre que joueur local
             case IconType.Key:
-                return true; // Visible pour tous
+                return IsLocalPlayerGardien(); // Visible pour le gardien
             case IconType.Objective:
                 return true; // Visible pour tous
             default:
@@ -56,9 +66,18 @@ public class MinimapIcon : NetworkBehaviour
         }
     }
 
+    bool IsLocalPlayerGardien()
+    {
+        if (NetworkClient.localPlayer == null)
+            return false;
+
+        GamePlayer gamePlayer = NetworkClient.localPlayer.GetComponent<GamePlayer>();
+        return gamePlayer != null && gamePlayer.PlayerRole == Role.Gardien;
+    }
+
     void CreateMinimapIcon()
     {
-        // Créer un child GameObject pour l'icône
+        // Crï¿½er un child GameObject pour l'icï¿½ne
         iconObject = new GameObject($"MinimapIcon_{iconType}");
         iconObject.transform.SetParent(transform);
         iconObject.transform.localPosition = Vector3.zero;
@@ -118,7 +137,7 @@ public class MinimapIcon : NetworkBehaviour
     {
         if (iconObject != null)
         {
-            // Décalage en hauteur pour être visible sur la minimap
+            // Dï¿½calage en hauteur pour ï¿½tre visible sur la minimap
             Vector3 targetPos = transform.position + Vector3.up * iconHeight;
             iconObject.transform.position = targetPos;
 

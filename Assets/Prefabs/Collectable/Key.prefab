@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8564386332284827912}
   - component: {fileID: 4457026994739269890}
   - component: {fileID: -4312460222480946295}
+  - component: {fileID: 5657324505762204588}
   m_Layer: 0
   m_Name: Key
   m_TagString: Key
@@ -122,6 +123,26 @@ MonoBehaviour:
   showGizmos: 0
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+--- !u!114 &5657324505762204588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645967403884143789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 206a74b1a7f348b41baa5e43aa896547, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  iconType: 1
+  iconColor: {r: 0.81886786, g: 0.705823, b: 0.36926305, a: 1}
+  iconSize: 13
+  rotateWithObject: 0
+  iconHeight: 85
 --- !u!1001 &8761034109447956815
 PrefabInstance:
   m_ObjectHideFlags: 0
