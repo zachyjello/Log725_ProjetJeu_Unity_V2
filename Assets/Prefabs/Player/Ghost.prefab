@@ -160,7 +160,8 @@ MonoBehaviour:
   GroundLayers:
     serializedVersion: 2
     m_Bits: 9
-  CinemachineCameraTarget: {fileID: 0}
+  CinemachineCameraTarget: {fileID: 8128225776335307411, guid: 93bf7e2574219c14fa06c8c0d78c63f6,
+    type: 3}
   TopClamp: 70
   BottomClamp: -30
   CameraAngleOverride: 0

@@ -179,21 +179,50 @@ public class GameManager : NetworkBehaviour
 
     public void UpdatePlayerStatus()
     {
-        bool alive = false;
-        bool escaped = false;
-
-        foreach (var player in players)
+        // S'assurer que seule la logique serveur gère la fin de partie
+        if (!isServer)
         {
-            if (player.playerStatus == PlayerStatus.Alive)
-                alive = true;
-            else if (player.playerStatus == PlayerStatus.Escaped)
-                escaped = true;
+            Debug.LogWarning("[GameManager] UpdatePlayerStatus appelé depuis un client (ignore).");
+            return;
         }
 
-        if (!alive && !escaped)
+        // Re-générer la liste des joueurs au cas où elle ne serait pas à jour
+        players = FindObjectsOfType<ShadowPlayer>().ToList();
+
+        // Calculer les comptes actuels
+        int totalPlayers = players.Count;
+        if (totalPlayers == 0)
+        {
+            Debug.LogWarning("[GameManager] UpdatePlayerStatus: aucun joueur trouvé");
+            return;
+        }
+
+        int aliveCount = players.Count(p => p.playerStatus == PlayerStatus.Alive);
+        int escapedCount = players.Count(p => p.playerStatus == PlayerStatus.Escaped);
+        int deadCount = players.Count(p => p.playerStatus == PlayerStatus.Dead);
+
+        Debug.Log($"[GameManager] États joueurs - total:{totalPlayers} alive:{aliveCount} escaped:{escapedCount} dead:{deadCount}");
+
+        // Si tous les joueurs sont dans un état final (Dead ou Escaped) => fin de la partie
+        if (deadCount + escapedCount == totalPlayers)
+        {
+            // Si au moins une ombre s'est échappée => les Ombres gagnent
+            if (escapedCount > 0)
+            {
+                Debug.Log("[GameManager] Toutes les ombres sont arrivées à un état final et AU MOINS UNE s'est échappée -> Les Ombres gagnent");
+                EndGameShadowsWin(true);
+                return;
+            }
+
+            // Sinon (toutes sont mortes) => les Chercheurs gagnent
+            Debug.Log("[GameManager] Toutes les ombres sont arrivées à un état final et AUCUNE ne s'est échappée -> Les Chercheurs gagnent");
             EndGameShadowsWin(false);
-        if (!alive && escaped)
-            EndGameShadowsWin(true);
+            return;
+        }
+
+        // Si le temps est écoulé, les Chercheurs gagnent (déjà géré normalement dans Update()).
+        // Si on arrive ici, la partie continue.
+        Debug.Log("[GameManager] UpdatePlayerStatus : la partie continue.");
     }
 
     private void PlayBellsSound()
