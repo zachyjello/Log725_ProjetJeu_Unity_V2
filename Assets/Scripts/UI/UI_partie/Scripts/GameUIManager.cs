@@ -598,14 +598,14 @@ public class GameUIManager : MonoBehaviour
         // UpdateTimer();
 
         // Test touches clavier pour la démo, ajout clés et cgt rôle
-        if (Input.GetKeyDown(KeyCode.K))
-            AddKey();
+        //if (Input.GetKeyDown(KeyCode.K))
+        //    AddKey();
 
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            SetPlayerRole(!isOmbreRole);
-            Debug.Log($"Rôle changé : {(isOmbreRole ? "Ombre" : "Gardien")}");
-        }
+        //if (Input.GetKeyDown(KeyCode.L))
+        //{
+        //    SetPlayerRole(!isOmbreRole);
+        //    Debug.Log($"Rôle changé : {(isOmbreRole ? "Ombre" : "Gardien")}");
+        //}
 
         // "Echap" pour popup quitter
         if (Input.GetKeyDown(KeyCode.Escape)) {
@@ -617,7 +617,7 @@ public class GameUIManager : MonoBehaviour
             {
                 // Si le popup est déjà ouvert, la fermer (comme btn "non")
                 HideQuitPopup();
-                // On relock le curseur si tu veux reprendre le jeu direct :
+                // On relock le curseur pour reprendre le jeu directement (mais à voir ça)
                 UnityEngine.Cursor.lockState = CursorLockMode.Locked;
                 UnityEngine.Cursor.visible = false;
             }
