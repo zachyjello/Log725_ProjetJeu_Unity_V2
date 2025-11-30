@@ -213,22 +213,24 @@ public class CustomNetworkRoomManager : NetworkRoomManager
             // Spawn avec position et rotation du spawn point
             playerInstance = Instantiate(gamePlayer, spawnPoint.position, spawnPoint.rotation);
         }
-        else
+        else 
         {
-            // Fallback: spawn avec un offset basé sur le nombre de joueurs
-            // Disposer les joueurs en cercle pour éviter les collisions
-            int playerIndex = roomSlots.Count - 1; // Index commence à 0
-            float angle = playerIndex * 60f; // 60 degrés entre chaque joueur (max 6 joueurs)
-            float radius = 5f; // Rayon du cercle en mètres
-            float spawnHeight = 1f; // Hauteur au-dessus du sol
+            // Plus besoin car pose du spawnpoint
+            //    // Fallback: spawn avec un offset basé sur le nombre de joueurs
+            //    // Disposer les joueurs en cercle pour éviter les collisions
+            //    int playerIndex = roomSlots.Count - 1; // Index commence à 0
+            //    float angle = playerIndex * 60f; // 60 degrés entre chaque joueur (max 6 joueurs)
+            //    float radius = 5f; // Rayon du cercle en mètres
+            //    float spawnHeight = 1f; // Hauteur au-dessus du sol
 
-            Vector3 offset = new Vector3(
-                Mathf.Cos(angle * Mathf.Deg2Rad) * radius,
-                spawnHeight,
-                Mathf.Sin(angle * Mathf.Deg2Rad) * radius
-            );
+            //    Vector3 offset = new Vector3(
+            //        Mathf.Cos(angle * Mathf.Deg2Rad) * radius,
+            //        spawnHeight,
+            //        Mathf.Sin(angle * Mathf.Deg2Rad) * radius
+            //    );
 
-            playerInstance = Instantiate(gamePlayer, offset, Quaternion.identity);
+            //playerInstance = Instantiate(gamePlayer, offset, Quaternion.identity);
+            playerInstance = Instantiate(gamePlayer, Vector3.zero, Quaternion.identity);
         }
 
         // Spawner sur le réseau
