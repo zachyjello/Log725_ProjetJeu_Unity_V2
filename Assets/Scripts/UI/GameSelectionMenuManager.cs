@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using TMPro;
+using System.Net;
 
 
 public class GameSelectionMenuManager : MonoBehaviour
@@ -20,6 +21,7 @@ public class GameSelectionMenuManager : MonoBehaviour
     [SerializeField] private string defaultIP = "localhost";
 
     private CustomNetworkRoomManager roomManager;
+    private bool isAttemptingConnection = false;
 
     private void Start()
     {
@@ -69,12 +71,32 @@ public class GameSelectionMenuManager : MonoBehaviour
         string ip = ipInputField != null ? ipInputField.text : defaultIP;
         if (string.IsNullOrWhiteSpace(ip)) ip = defaultIP;
 
+        // Validation de l'IP
+        if (!IPAddress.TryParse(ip, out _) && ip != "localhost")
+        {
+            Debug.LogError($"[GameSelectionMenu] IP invalide: {ip}");
+            if (connectionStatusText != null) connectionStatusText.text = "IP invalide";
+            return;
+        }
+
         ShowConnectionPanel($"Connexion à {ip}...");
         PlayerPrefs.SetString("LastUsedIP", ip);
         PlayerPrefs.Save();
 
         roomManager.networkAddress = ip;
-        roomManager.StartClient();
+        isAttemptingConnection = true;
+        try
+        {
+            roomManager.StartClient();
+            StartCoroutine(WaitForConnection());
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[GameSelectionMenu] Erreur lors du démarrage du client vers {ip}: {e.Message}");
+            isAttemptingConnection = false;
+            if (connectionStatusText != null) connectionStatusText.text = "Erreur de connexion";
+            HideConnectionPanel();
+        }
     }
 
     /// <summary>
@@ -120,6 +142,32 @@ public class GameSelectionMenuManager : MonoBehaviour
             backButton.interactable = interactable;
         if (ipInputField != null)
             ipInputField.interactable = interactable;
+    }
+
+    private IEnumerator WaitForConnection()
+    {
+        float timeout = 10f; // 10 secondes
+        float elapsed = 0f;
+
+        while (elapsed < timeout)
+        {
+            if (NetworkClient.isConnected)
+            {
+                Debug.Log("[GameSelectionMenu] Connexion réussie");
+                isAttemptingConnection = false;
+                yield break; // Connexion réussie, sortir
+            }
+            yield return new WaitForSeconds(0.5f);
+            elapsed += 0.5f;
+        }
+
+        // Timeout
+        Debug.Log("[GameSelectionMenu] Timeout de connexion");
+        isAttemptingConnection = false;
+        if (connectionStatusText != null) connectionStatusText.text = "Timeout de connexion";
+        HideConnectionPanel();
+        if (NetworkClient.isConnected) NetworkClient.Disconnect();
+        else NetworkClient.Shutdown();
     }
 
     private void OnDestroy()
