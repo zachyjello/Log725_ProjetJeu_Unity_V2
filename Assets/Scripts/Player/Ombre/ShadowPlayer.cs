@@ -98,6 +98,9 @@ public class ShadowPlayer : NetworkBehaviour
     private GameObject spawnedGhost;
     private GameObject mainCamera;
 
+    // Added flag to prevent double-transform
+    private bool _hasTransformedToGhost = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -340,7 +343,7 @@ public class ShadowPlayer : NetworkBehaviour
 
     private void InLightCheck()
     {
-        Debug.Log($"[ShadowPlayer] Démarrage inlightcheck");
+        //Debug.Log($"[ShadowPlayer] Démarrage inlightcheck");
         bool inLight = false;
         bool inEnemyLight = false;
 
@@ -348,6 +351,26 @@ public class ShadowPlayer : NetworkBehaviour
             return;
 
         _lastLightCheck = Time.time;
+
+        // Définit des points d'échantillonnage verticalement sur le joueur (pieds / centre / tête)
+        Vector3 centerWorld;
+        float halfHeight;
+        if (_characterController != null)
+        {
+            centerWorld = transform.position + _characterController.center;
+            halfHeight = _characterController.height * 0.5f;
+        }
+        else
+        {
+            centerWorld = transform.position;
+            halfHeight = 1.0f; // fallback si pas de CharacterController
+        }
+
+        Vector3 sampleBottom = centerWorld - Vector3.up * halfHeight; // pieds approximés
+        Vector3 sampleMiddle = centerWorld;                            // torse/centre
+        Vector3 sampleTop = centerWorld + Vector3.up * halfHeight;    // tête approximée
+
+        Vector3[] samplePoints = new Vector3[] { sampleBottom, sampleMiddle, sampleTop };
 
         foreach (var lightSource in _lightSources)
         {
@@ -362,26 +385,32 @@ public class ShadowPlayer : NetworkBehaviour
                     continue;
             }
 
-            // Vérifier si le joueur est dans la lumière
-            bool playerInThisLight = lightSource.IsPlayerInLight(transform.position);
+            // Tester si l'une des positions échantillonnées est dans la lumière
+            bool playerInThisLight = false;
+            foreach (var samplePoint in samplePoints)
+            {
+                if (lightSource.IsPlayerInLight(samplePoint))
+                {
+                    // Vérifier qu'il n'y a pas d'obstacle entre la lumière et ce point du joueur
+                    Vector3 directionToPlayer = (samplePoint - lightSource.GetLightPosition()).normalized;
+                    float distance = Vector3.Distance(samplePoint, lightSource.GetLightPosition());
+                    if (!Physics.Raycast(lightSource.GetLightPosition(), directionToPlayer, distance, blockingLayers))
+                    {
+                        playerInThisLight = true;
+                        break; // un seul point suffisant pour considérer le joueur dans la lumière
+                    }
+                }
+            }
 
             if (playerInThisLight)
             {
-                Vector3 directionToPlayer = (transform.position - lightSource.GetLightPosition()).normalized;
-                float distance = Vector3.Distance(transform.position, lightSource.GetLightPosition());
+                inLight = true;
 
-                // Vérifier qu'il n'y a pas d'obstacle entre la lumière et le joueur
-                if (!Physics.Raycast(lightSource.GetLightPosition(), directionToPlayer, distance, blockingLayers))
+                if (lightSource.IsGuardianLight())
                 {
-                    inLight = true;
-                    Debug.Log($"[ShadowPlayer] Dans la lumière. inLight={inLight}");
-
-                    if (lightSource.IsGuardianLight())
-                    {
-                        inEnemyLight = true;
-                        Debug.Log($"[ShadowPlayer] Dans la lumière ennemie. inEnemyLight={inEnemyLight}");
-                        break; // Pas besoin de vérifier les autres
-                    }
+                    inEnemyLight = true;
+                    // Une lumière ennemie suffit, pas besoin de tester d'autres lumières
+                    break;
                 }
             }
         }
@@ -429,19 +458,38 @@ public class ShadowPlayer : NetworkBehaviour
 
         if (GameManager.Instance != null)
             GameManager.Instance.UpdatePlayerStatus();
-
-        // Spawn fantôme uniquement pour le joueur local
-        if (isLocalPlayer && ghostPrefab != null)
+        
+        if (isServer && !_hasTransformedToGhost)
         {
-            spawnedGhost = Instantiate(ghostPrefab, transform.position, transform.rotation);
+            _hasTransformedToGhost = true;
 
-            if (mainCamera != null)
-                mainCamera.transform.parent = spawnedGhost.transform;
-
-            var ghostController = spawnedGhost.GetComponent<ThirdPersonController>();
-            if (ghostController != null)
+            if (ghostPrefab == null)
             {
-                ghostController.enabled = true;
+                Debug.LogWarning("[ShadowPlayer] ghostPrefab is null — can't transform to ghost.");
+            }
+            else
+            {
+                var identity = ghostPrefab.GetComponent<NetworkIdentity>();
+                if (identity == null)
+                {
+                    Debug.LogError("[ShadowPlayer] ghostPrefab has no NetworkIdentity! Add a NetworkIdentity to the prefab and register it in the NetworkManager spawnable prefabs.");
+                }
+                else
+                {
+                    GameObject ghostObj = Instantiate(ghostPrefab, transform.position, transform.rotation);
+
+                    if (connectionToClient != null)
+                    {
+                        NetworkServer.ReplacePlayerForConnection(connectionToClient, ghostObj, true);
+                        Debug.Log($"[ShadowPlayer] Replaced player for connection with Ghost: {ghostObj.name}");
+                    }
+                    else
+                    {
+                        NetworkServer.Spawn(ghostObj);
+                        NetworkServer.Destroy(this.gameObject);
+                        Debug.Log($"[ShadowPlayer] Spawned ghost as NPC: {ghostObj.name}");
+                    }
+                }
             }
         }
 
