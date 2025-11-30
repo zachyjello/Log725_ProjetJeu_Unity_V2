@@ -1,0 +1,15 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/Scripts/UI/UI_partie/USS/RoleRevealStyles.uss" />
+    
+    <ui:VisualElement name="role-reveal-overlay" class="overlay-root">
+        <ui:VisualElement name="role-reveal-container" class="reveal-container">
+            <ui:Label name="role-title" text="Vous êtes" class="role-title" />
+            <ui:Label name="role-name" text="" class="role-name role-name--gardien" />
+            <ui:Label name="role-description" text="" class="role-description" />
+            
+            <ui:Label name="role-info" text="" class="role-info" style="display: none;" />
+        
+            <ui:Label name="role-timer" text="" class="role-timer" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

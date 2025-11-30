@@ -2,7 +2,7 @@ using Mirror;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
-
+using StarterAssets;
 
 public class GamePlayer : NetworkBehaviour
 {
@@ -75,6 +75,71 @@ public class GamePlayer : NetworkBehaviour
         {
             minimap.SetPlayerToFollow(transform);
         }
+
+        StartCoroutine(ShowRoleAfterDelay());
+    }
+
+    private IEnumerator ShowRoleAfterDelay() {
+        // Attendre 1 frame pour que tout soit initialisé
+        yield return new WaitForEndOfFrame();
+
+        if (RoleRevealUI.Instance != null) {
+            Debug.Log($"[GamePlayer] Affichage du rôle: {role}");
+            DisablePlayerControls();  // Bloquer contrôles joueur
+            RoleRevealUI.Instance.OnRevealComplete += OnRoleRevealComplete; // Abonnement à event fin du reveal
+            RoleRevealUI.Instance.ShowRole(role);
+        }
+        else {
+            Debug.LogError("[GamePlayer] RoleRevealUI.Instance est NULL!");
+        }
+    }
+
+    // Réactiver les contrôles + se désabonner
+    private void OnRoleRevealComplete() {
+        EnablePlayerControls();
+        
+        if (RoleRevealUI.Instance != null) {
+            RoleRevealUI.Instance.OnRevealComplete -= OnRoleRevealComplete;
+        }
+    }
+
+    private void DisablePlayerControls()
+    {
+        // Désactiver ThirdPersonController
+        var tpc = GetComponent<ThirdPersonController>();
+        if (tpc != null)
+        {
+            tpc.enabled = false;
+        }
+        
+        // Désactiver les scripts spécifiques au rôle
+        var shadowPlayer = GetComponent<ShadowPlayer>();
+        if (shadowPlayer != null)
+        {
+            shadowPlayer.enabled = false;
+        }
+        
+        var flashLight = GetComponent<OffsetFlashLight>();
+        if (flashLight != null)
+        {
+            flashLight.enabled = false;
+        }
+        Debug.Log("[GamePlayer] Contrôles désactivés");
+    }
+
+    private void EnablePlayerControls()
+    {
+        // Réactiver ThirdPersonController
+        var tpc = GetComponent<ThirdPersonController>();
+        if (tpc != null)
+        {
+            tpc.enabled = true;
+        }
+        
+        // Réactiver les scripts selon le rôle
+        ConfigureRoleComponents();
+        
+        Debug.Log("[GamePlayer] Contrôles réactivés");
     }
 
     // Appelé quand ce client reçoit l'autorité, alternative à OnStartLocalPlayer en cas de problème
