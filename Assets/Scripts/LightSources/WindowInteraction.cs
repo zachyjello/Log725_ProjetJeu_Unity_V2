@@ -3,11 +3,11 @@ using UnityEngine;
 
 //public class WindowInteraction : MonoBehaviour
 //{
-//    [Header("Références")]
-//    public GameObject windowGlass; // La vitre/fenêtre
+//    [Header("Rï¿½fï¿½rences")]
+//    public GameObject windowGlass; // La vitre/fenï¿½tre
 //    public GameObject interactionUI; // Le texte "E"
 
-//    [Header("Paramètres")]
+//    [Header("Paramï¿½tres")]
 //    public float interactionDistance = 3f;
 //    public KeyCode interactionKey = KeyCode.E;
 
@@ -18,31 +18,31 @@ using UnityEngine;
 //    public float soundVolume = 0.5f;
 
 //    [Header("Textes d'interaction")]
-//    public string openText = "E - Ouvrir la fenêtre";
-//    public string closedText = "E - Fermer la fenêtre";
+//    public string openText = "E - Ouvrir la fenï¿½tre";
+//    public string closedText = "E - Fermer la fenï¿½tre";
 
 //    private Transform localPlayer;
 //    private bool isPlayerNear = false;
-//    private bool isWindowOpen = false; // false = fermée (vitre visible)
+//    private bool isWindowOpen = false; // false = fermï¿½e (vitre visible)
 //    private TMPro.TextMeshProUGUI interactionText;
 //    private AudioSource audioSource;
 
 //    void Start()
 //    {
-//        // Cacher le UI au début
+//        // Cacher le UI au dï¿½but
 //        if (interactionUI != null)
 //        {
 //            interactionUI.SetActive(false);
 //            interactionText = interactionUI.GetComponentInChildren<TMPro.TextMeshProUGUI>();
 //        }
 
-//        // Vérifier que la vitre existe
+//        // Vï¿½rifier que la vitre existe
 //        if (windowGlass == null)
 //        {
-//            Debug.LogError("WindowInteraction: Vitre non assignée sur " + gameObject.name);
+//            Debug.LogError("WindowInteraction: Vitre non assignï¿½e sur " + gameObject.name);
 //        }
 
-//        // Créer un AudioSource pour les sons
+//        // Crï¿½er un AudioSource pour les sons
 //        audioSource = gameObject.AddComponent<AudioSource>();
 //        audioSource.playOnAwake = false;
 //        audioSource.spatialBlend = 1f; // Son 3D
@@ -50,7 +50,7 @@ using UnityEngine;
 //        audioSource.maxDistance = 10f;
 //        audioSource.volume = soundVolume;
 
-//        // État initial : fenêtre fermée (vitre visible)
+//        // ï¿½tat initial : fenï¿½tre fermï¿½e (vitre visible)
 //        if (windowGlass != null)
 //        {
 //            windowGlass.SetActive(!isWindowOpen);
@@ -86,7 +86,7 @@ using UnityEngine;
 //        // Calculer la distance
 //        float distance = Vector3.Distance(localPlayer.position, transform.position);
 
-//        // Vérif si le joueur est à portée
+//        // Vï¿½rif si le joueur est ï¿½ portï¿½e
 //        if (distance <= interactionDistance)
 //        {
 //            if (!isPlayerNear)
@@ -98,7 +98,7 @@ using UnityEngine;
 //                }
 //            }
 
-//            // Détecter appui E
+//            // Dï¿½tecter appui E
 //            if (Input.GetKeyDown(interactionKey))
 //            {
 //                ToggleWindow();
@@ -121,7 +121,7 @@ using UnityEngine;
 //    {
 //        isWindowOpen = !isWindowOpen;
 
-//        // Activer/désactiver vitre
+//        // Activer/dï¿½sactiver vitre
 //        if (windowGlass != null)
 //        {
 //            windowGlass.SetActive(!isWindowOpen); // Si ouverte = pas de vitre
@@ -139,7 +139,7 @@ using UnityEngine;
 
 //        UpdateInteractionText();
 
-//        Debug.Log($"Fenêtre {(isWindowOpen ? "ouverte (vitre cachée)" : "fermée (vitre visible)")}");
+//        Debug.Log($"Fenï¿½tre {(isWindowOpen ? "ouverte (vitre cachï¿½e)" : "fermï¿½e (vitre visible)")}");
 //    }
 
 //    void UpdateInteractionText()
@@ -164,11 +164,12 @@ using UnityEngine;
 
 public class WindowInteraction : NetworkBehaviour
 {
-    [Header("Références")]
+    [Header("Rï¿½fï¿½rences")]
     public GameObject windowGlass;
     public GameObject interactionUI;
+    private GameObject windowLight;
 
-    [Header("Paramètres")]
+    [Header("Paramï¿½tres")]
     public float interactionDistance = 4f;
     public KeyCode interactionKey = KeyCode.E;
 
@@ -177,8 +178,8 @@ public class WindowInteraction : NetworkBehaviour
     public AudioClip closeSound;
     [Range(0f, 1f)]
     public float soundVolume = 0.7f;
-    public float minHearDistance = 1f;      // Distance où le son est à volume max
-    public float maxHearDistance = 15f;     // Distance où le son devient inaudible
+    public float minHearDistance = 1f;      // Distance oï¿½ le son est ï¿½ volume max
+    public float maxHearDistance = 15f;     // Distance oï¿½ le son devient inaudible
 
     [SyncVar(hook = nameof(OnWindowStateChanged))]
     private bool isWindowOpen = false;
@@ -197,17 +198,20 @@ public class WindowInteraction : NetworkBehaviour
             interactionUI.SetActive(false);
         }
 
-        // Créer AudioSource avec spatialisation 3D
+        Transform childTransform = transform.Find("WindowLight"); // Works even if inactive
+        windowLight = childTransform.gameObject;
+
+        // Crï¿½er AudioSource avec spatialisation 3D
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 1f;              // 1 = son 3D complet (spatialisation)
         audioSource.volume = soundVolume;
-        audioSource.minDistance = minHearDistance;  // Distance min pour atténuation
+        audioSource.minDistance = minHearDistance;  // Distance min pour attï¿½nuation
         audioSource.maxDistance = maxHearDistance;  // Distance max audible
-        audioSource.rolloffMode = AudioRolloffMode.Linear; // Atténuation linéaire
-        audioSource.dopplerLevel = 0f;              // Pas d'effet Doppler pour fenêtres
+        audioSource.rolloffMode = AudioRolloffMode.Linear; // Attï¿½nuation linï¿½aire
+        audioSource.dopplerLevel = 0f;              // Pas d'effet Doppler pour fenï¿½tres
 
-        // Appliquer état initial (sans son au démarrage)
+        // Appliquer ï¿½tat initial (sans son au dï¿½marrage)
         if (windowGlass != null)
         {
             windowGlass.SetActive(!isWindowOpen);
@@ -216,15 +220,15 @@ public class WindowInteraction : NetworkBehaviour
 
     void Update()
     {
-        // Chercher le joueur local de plusieurs façons
+        // Chercher le joueur local de plusieurs faï¿½ons
         if (localPlayer == null)
         {
-            // Méthode 1 : Via GamePlayer
+            // Mï¿½thode 1 : Via GamePlayer
             GamePlayer[] allPlayers = FindObjectsOfType<GamePlayer>();
 
             if (!playerSearchLogged)
             {
-                Debug.Log($"[Window] Recherche joueur... {allPlayers.Length} GamePlayer(s) trouvé(s)");
+                Debug.Log($"[Window] Recherche joueur... {allPlayers.Length} GamePlayer(s) trouvï¿½(s)");
             }
 
             foreach (GamePlayer player in allPlayers)
@@ -237,13 +241,13 @@ public class WindowInteraction : NetworkBehaviour
                 if (player.isLocalPlayer)
                 {
                     localPlayer = player.transform;
-                    Debug.Log($"[Window] Joueur local trouvé via GamePlayer: {player.PlayerName}");
+                    Debug.Log($"[Window] Joueur local trouvï¿½ via GamePlayer: {player.PlayerName}");
                     playerSearchLogged = true;
                     break;
                 }
             }
 
-            // Méthode 2 : Via Tag "Player" (fallback)
+            // Mï¿½thode 2 : Via Tag "Player" (fallback)
             if (localPlayer == null)
             {
                 GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -253,19 +257,19 @@ public class WindowInteraction : NetworkBehaviour
                     if (netId != null && netId.isLocalPlayer)
                     {
                         localPlayer = playerObj.transform;
-                        Debug.Log($"[Window] Joueur local trouvé via Tag");
+                        Debug.Log($"[Window] Joueur local trouvï¿½ via Tag");
                         playerSearchLogged = true;
                     }
                 }
             }
 
-            // Méthode 3 : Via Camera (last resort)
+            // Mï¿½thode 3 : Via Camera (last resort)
             if (localPlayer == null && !playerSearchLogged)
             {
                 Camera mainCam = Camera.main;
                 if (mainCam != null)
                 {
-                    // Chercher le joueur parent de la caméra
+                    // Chercher le joueur parent de la camï¿½ra
                     Transform parent = mainCam.transform.parent;
                     while (parent != null)
                     {
@@ -273,7 +277,7 @@ public class WindowInteraction : NetworkBehaviour
                         if (netId != null && netId.isLocalPlayer)
                         {
                             localPlayer = parent;
-                            Debug.Log($"[Window] Joueur local trouvé via Camera: {parent.name}");
+                            Debug.Log($"[Window] Joueur local trouvï¿½ via Camera: {parent.name}");
                             playerSearchLogged = true;
                             break;
                         }
@@ -292,7 +296,7 @@ public class WindowInteraction : NetworkBehaviour
         // Calculer la distance
         float distance = Vector3.Distance(localPlayer.position, transform.position);
 
-        // Vérifier si le joueur est à portée
+        // Vï¿½rifier si le joueur est ï¿½ portï¿½e
         if (distance <= interactionDistance)
         {
             if (!isPlayerNear)
@@ -308,7 +312,7 @@ public class WindowInteraction : NetworkBehaviour
 
             if (Input.GetKeyDown(interactionKey))
             {
-                Debug.Log($"[Window {gameObject.name}] Touche E pressée");
+                Debug.Log($"[Window {gameObject.name}] Touche E pressï¿½e");
                 CmdToggleWindow();
             }
         }
@@ -328,10 +332,10 @@ public class WindowInteraction : NetworkBehaviour
     [Command(requiresAuthority = false)]
     void CmdToggleWindow()
     {
-        Debug.Log($"[Window {gameObject.name}] Command reçue sur serveur");
+        Debug.Log($"[Window {gameObject.name}] Command reï¿½ue sur serveur");
         isWindowOpen = !isWindowOpen;
 
-        Debug.Log($"[Window Server] Fenêtre {(isWindowOpen ? "OUVERTE" : "FERMÉE")}");
+        Debug.Log($"[Window Server] Fenï¿½tre {(isWindowOpen ? "OUVERTE" : "FERMï¿½E")}");
     }
 
     void OnWindowStateChanged(bool oldValue, bool newValue)
@@ -342,15 +346,18 @@ public class WindowInteraction : NetworkBehaviour
         {
             windowGlass.SetActive(!newValue);
         }
+        if (windowLight != null){
+            windowLight.SetActive(newValue);
+        }
 
-        // Jouer le son localement sur CHAQUE client quand l'état change
-        if (audioSource != null && oldValue != newValue) // Vérif qu'il y a vraiment un changement
+        // Jouer le son localement sur CHAQUE client quand l'ï¿½tat change
+        if (audioSource != null && oldValue != newValue) // Vï¿½rif qu'il y a vraiment un changement
         {
             AudioClip soundToPlay = newValue ? openSound : closeSound;
             if (soundToPlay != null)
             {
                 audioSource.PlayOneShot(soundToPlay);
-                Debug.Log($"[Window {gameObject.name}] Son joué: {(newValue ? "ouverture" : "fermeture")}");
+                Debug.Log($"[Window {gameObject.name}] Son jouï¿½: {(newValue ? "ouverture" : "fermeture")}");
             }
         }
     }
