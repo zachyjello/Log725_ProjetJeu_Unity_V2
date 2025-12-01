@@ -16,7 +16,8 @@ public class GameManager : NetworkBehaviour
 
     public enum GameState { Loading, Playing, GameOver }
     public GameOverUI gameOverUI; // Assign in Inspector
-    [SyncVar] public int keysFound = 0;
+    [SyncVar(hook = nameof(OnKeysFoundChanged))]
+    public int keysFound = 0;
     [SyncVar] public int keysToSpawn = 0;
     [SyncVar] public bool AllKeysFound = false;
 
@@ -134,9 +135,16 @@ public class GameManager : NetworkBehaviour
 
     public void AddKey(){
         keysFound++;
-        GameUIManager.Instance.KeyFound();
+        // GameUIManager.Instance.KeyFound();
         if(keysFound == keysToSpawn){
             AllKeysFound = true;
+        }
+    }
+
+    private void OnKeysFoundChanged(int oldValue, int newValue){
+        Debug.Log($"[GameManager] Keys found updated: {newValue}");
+        if (GameUIManager.Instance != null){
+            GameUIManager.Instance.KeyFound();
         }
     }
 
