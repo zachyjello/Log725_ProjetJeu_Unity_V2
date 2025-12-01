@@ -50,9 +50,11 @@ public class ShadowPlayer : NetworkBehaviour
 
     [SyncVar(hook = nameof(OnHealthChangedSync))]
     private float _health;
-    public float health {
+    public float health
+    {
         get => _health;
-        set {
+        set
+        {
             if (!isServer) return; // Seulement le serveur peut changer la santé
             float newHealth = Mathf.Clamp(value, 0f, maxHealth);
             _health = newHealth;
@@ -431,7 +433,29 @@ public class ShadowPlayer : NetworkBehaviour
             OnEnterLight();
         else
             OnExitLight();
-    }  
+    }
+
+    [Command]
+    void CmdCollectKey(GameObject keyObject)
+    {
+        if (keyObject == null || !keyObject.CompareTag("Key")) return;
+
+        NetworkServer.Destroy(keyObject);
+        GameManager.Instance.AddKey();
+    }
+
+    [Command]
+    void CmdEscape()
+    {
+        if (!GameManager.Instance.AllKeysFound) return;
+
+        playerStatus = PlayerStatus.Escaped;
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.UpdatePlayerStatus();
+
+        gameObject.SetActive(false);
+    }
 
     [Command]
     void CmdUpdateLightStatus(bool inLight, bool inEnemyLight)
@@ -458,7 +482,7 @@ public class ShadowPlayer : NetworkBehaviour
 
         if (GameManager.Instance != null)
             GameManager.Instance.UpdatePlayerStatus();
-        
+
         if (isServer && !_hasTransformedToGhost)
         {
             _hasTransformedToGhost = true;
@@ -506,22 +530,16 @@ public class ShadowPlayer : NetworkBehaviour
 
     private void OnTriggerEnter(Collider collision)
     {
-        if (!isServer) return; // Les triggers sont gérés par le serveur
+        if (!isLocalPlayer) return;
 
         if (collision.gameObject.CompareTag("Key"))
         {
-            NetworkServer.Destroy(collision.gameObject);
-            GameManager.Instance.AddKey();
+            CmdCollectKey(collision.gameObject);
         }
 
         if (collision.gameObject.CompareTag("ExitDoor") && GameManager.Instance.AllKeysFound)
         {
-            playerStatus = PlayerStatus.Escaped;
-
-            if (GameManager.Instance != null)
-                GameManager.Instance.UpdatePlayerStatus();
-
-            gameObject.SetActive(false);
+            CmdEscape();
         }
     }
 
