@@ -199,7 +199,10 @@ public class WindowInteraction : NetworkBehaviour
         }
 
         Transform childTransform = transform.Find("WindowLight"); // Works even if inactive
-        windowLight = childTransform.gameObject;
+        if (childTransform != null)
+        {
+            windowLight = childTransform.gameObject;
+        }
 
         // Cr�er AudioSource avec spatialisation 3D
         audioSource = gameObject.AddComponent<AudioSource>();
