@@ -2188,7 +2188,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4536987828445403695}
-  - component: {fileID: 8314895105678582844}
   m_Layer: 0
   m_Name: Ch42_nonPBR
   m_TagString: Untagged
@@ -2218,27 +2217,6 @@ Transform:
   - {fileID: 3814398484610131592}
   m_Father: {fileID: 61857757131955886}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &8314895105678582844
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2495316976681621970}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: ddd685744cdaf72429c192171b05a0e6, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 1
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2546559200327904577
 GameObject:
   m_ObjectHideFlags: 0
