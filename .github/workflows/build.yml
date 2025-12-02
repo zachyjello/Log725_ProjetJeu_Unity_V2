@@ -10,6 +10,11 @@ jobs:
     name: Build and analyze
     runs-on: windows-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for better analysis
+      
       - name: Cache SonarQube Cloud scanner
         id: cache-sonar-scanner
         uses: actions/cache@v4
@@ -17,7 +22,7 @@ jobs:
           path: ${{ runner.temp }}\sonar-scanner
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
-
+      
       - name: Install SonarQube Cloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: powershell
@@ -25,15 +30,15 @@ jobs:
           New-Item -Path ${{ runner.temp }}\sonar-scanner -ItemType Directory -Force
           Invoke-WebRequest -Uri "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-windows-x64.zip" -OutFile "${{ runner.temp }}\sonar-scanner.zip"
           Expand-Archive -Path "${{ runner.temp }}\sonar-scanner.zip" -DestinationPath "${{ runner.temp }}\sonar-scanner"
-
+      
       - name: Analyze with SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          ${{ runner.temp }}\sonar-scanner\sonar-scanner-6.2.1.4610-windows-x64\bin\sonar-scanner.bat `
+          & "${{ runner.temp }}\sonar-scanner\sonar-scanner-6.2.1.4610-windows-x64\bin\sonar-scanner.bat" `
             -Dsonar.organization=zachyjello `
             -Dsonar.projectKey=zachyjello_Log725_ProjetJeu_Unity_V2 `
             -Dsonar.sources=Assets `
             -Dsonar.host.url=https://sonarcloud.io `
-            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.token=$env:SONAR_TOKEN
