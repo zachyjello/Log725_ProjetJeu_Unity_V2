@@ -4594,11 +4594,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 61857757131955886}
-  - component: {fileID: 4180581752262114565}
   - component: {fileID: -2693389551597244708}
   - component: {fileID: 8636839557678999318}
-  - component: {fileID: -4404490424361284768}
   - component: {fileID: 830038695690913713}
+  - component: {fileID: -4404490424361284768}
   - component: {fileID: -1296769855152661331}
   - component: {fileID: 2269596022676610493}
   - component: {fileID: 7210070181173748768}
@@ -4610,6 +4609,7 @@ GameObject:
   - component: {fileID: 6318271127831668738}
   - component: {fileID: 8681980043536109446}
   - component: {fileID: 2739730960601048209}
+  - component: {fileID: 4180581752262114565}
   - component: {fileID: -1506887944230341991}
   m_Layer: 8
   m_Name: Gardien
@@ -4636,27 +4636,6 @@ Transform:
   - {fileID: 7499119298092669287}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &4180581752262114565
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7554592982891490919}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: ddd685744cdaf72429c192171b05a0e6, type: 3}
-  m_Controller: {fileID: 9100000, guid: 40db3173a05ae3242b1c182a09b0a183, type: 2}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &-2693389551597244708
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4708,6 +4687,22 @@ MonoBehaviour:
   rotationSensitivity: 0.01
   positionPrecision: 0.01
   scalePrecision: 0.01
+--- !u!114 &830038695690913713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7554592982891490919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29fb8710ec8724a5286a6130514d485b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  nameTag: {fileID: 0}
 --- !u!114 &-4404490424361284768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4726,22 +4721,6 @@ MonoBehaviour:
   characterController: {fileID: 7210070181173748768}
   reactivationDelay: 0.1
   showDebugLogs: 1
---- !u!114 &830038695690913713
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7554592982891490919}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29fb8710ec8724a5286a6130514d485b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  nameTag: {fileID: 0}
 --- !u!114 &-1296769855152661331
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5056,6 +5035,27 @@ MonoBehaviour:
   visualModel: {fileID: 4536987828445403695}
   showDebugLogs: 0
   disableThirdPersonControllerOnSpawn: 1
+--- !u!95 &4180581752262114565
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7554592982891490919}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: ddd685744cdaf72429c192171b05a0e6, type: 3}
+  m_Controller: {fileID: 9100000, guid: 40db3173a05ae3242b1c182a09b0a183, type: 2}
+  m_CullingMode: 1
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &-1506887944230341991
 MonoBehaviour:
   m_ObjectHideFlags: 0
