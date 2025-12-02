@@ -4476,7 +4476,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  shadowMoveSpeed: 7
+  shadowMoveSpeed: 10
   playerStatus: 0
   inLightSource: 0
   inEnemyLightSource: 0

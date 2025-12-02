@@ -10418,7 +10418,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxGameTime: 440
+  maxGameTime: 220
   gameOverUI: {fileID: 0}
   keysFound: 0
   keysToSpawn: 0

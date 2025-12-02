@@ -5860,7 +5860,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77ce6f840b7cd3f488fb0f198f2d81e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxBatteryLife: 180
+  maxBatteryLife: 20
   BatteryEnabled: 1
   flashLight: {fileID: 5220783013253623736}
 --- !u!114 &7826239173803686493
