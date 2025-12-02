@@ -37,10 +37,10 @@
                     </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement name="controls-section" class="settings-section">
-                    <ui:Label text="Contrôles" class="section-title" />
+                    <ui:Label text="Contrôles qwerty/azerty" class="section-title" />
                     <ui:VisualElement class="setting-row">
                         <ui:Label text="Avancer" class="setting-label" />
-                        <ui:TextField name="forward-key" value="Z" readonly="true" class="key-input" />
+                        <ui:TextField name="forward-key" value="W/Z" readonly="true" class="key-input" />
                     </ui:VisualElement>
                     <ui:VisualElement class="setting-row">
                         <ui:Label text="Reculer" class="setting-label" />
@@ -48,7 +48,7 @@
                     </ui:VisualElement>
                     <ui:VisualElement class="setting-row">
                         <ui:Label text="Gauche" class="setting-label" />
-                        <ui:TextField name="left-key" value="Q" readonly="true" class="key-input" />
+                        <ui:TextField name="left-key" value="A/Q" readonly="true" class="key-input" />
                     </ui:VisualElement>
                     <ui:VisualElement class="setting-row">
                         <ui:Label text="Droite" class="setting-label" />
@@ -82,7 +82,7 @@
                     <ui:Label text="Contrôles spéciaux Ombre" class="section-title" />
                     <ui:VisualElement class="setting-row">
                         <ui:Label text="Transformation" class="setting-label" />
-                        <ui:TextField name="shadow-transform-key" value="A" readonly="true" class="key-input" />
+                        <ui:TextField name="shadow-transform-key" value="Q/A" readonly="true" class="key-input" />
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:ScrollView>
