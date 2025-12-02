@@ -10,6 +10,14 @@ jobs:
     name: Build and analyze
     runs-on: windows-latest
     steps:
+      - name: Build and analyze
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
+        run: |
+          & "${{ runner.temp }}\scanner\dotnet-sonarscanner.exe" begin /k:"zachyjello_Log725_ProjetJeu_Unity_V2" /o:"zachyjello" /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          dotnet build YourUnityProject.sln
+          & "${{ runner.temp }}\scanner\dotnet-sonarscanner.exe" end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
       - name: Install SonarQube Cloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: powershell
