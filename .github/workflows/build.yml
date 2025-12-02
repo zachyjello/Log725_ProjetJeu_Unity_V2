@@ -38,9 +38,12 @@ jobs:
           "%RUNNER_TEMP%\sonar-scanner\sonar-scanner-6.2.1.4610-windows-x64\bin\sonar-scanner.bat" ^
             -Dsonar.organization=zachyjello ^
             -Dsonar.projectKey=zachyjello_Log725_ProjetJeu_Unity_V2 ^
+            -Dsonar.projectBaseDir=. ^
             -Dsonar.sources=Assets ^
+            -Dsonar.projectVersion=1.0 ^
             -Dsonar.cs.file.suffixes=.cs ^
             -Dsonar.exclusions=**/Library/**,**/Temp/**,**/Obj/**,**/Build/**,**/Builds/**,**/*.meta ^
             -Dsonar.sourceEncoding=UTF-8 ^
             -Dsonar.host.url=https://sonarcloud.io ^
             -Dsonar.token=%SONAR_TOKEN%
+            -Dsonar.scm.enabled=false
