@@ -297,9 +297,11 @@ public class GameUIManager : MonoBehaviour
         }
     }
 
-    public void UpdateTotalKeys(int i){
-        totalKeys = i;
-        UpdateKeyCounter();
+    public void UpdateTotalKeys(int totalKeys){
+        this.totalKeys = totalKeys;
+        if (keyLabel != null){
+            keyLabel.text = $"{keysFound}/{totalKeys} Keys";
+        }
     }
 
     public void KeyFound(){
