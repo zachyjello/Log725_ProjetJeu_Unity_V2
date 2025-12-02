@@ -213,13 +213,13 @@ public class GameManager : NetworkBehaviour
                 return;
             }
 
-            // Sinon (toutes sont mortes) => les Chercheurs gagnent
-            Debug.Log("[GameManager] Toutes les ombres sont arrivées à un état final et AUCUNE ne s'est échappée -> Les Chercheurs gagnent");
+            // Sinon (toutes sont mortes) => les Gardiens gagnent
+            Debug.Log("[GameManager] Toutes les ombres sont arrivées à un état final et AUCUNE ne s'est échappée -> Les Gardiens gagnent");
             EndGameShadowsWin(false);
             return;
         }
 
-        // Si le temps est écoulé, les Chercheurs gagnent (déjà géré normalement dans Update()).
+        // Si le temps est écoulé, les Gardiens gagnent (déjà géré normalement dans Update()).
         // Si on arrive ici, la partie continue.
         Debug.Log("[GameManager] UpdatePlayerStatus : la partie continue.");
     }
@@ -291,7 +291,7 @@ public class GameManager : NetworkBehaviour
 
             bool won = DeterminePlayerWin(gp, shadowsWin);
 
-            string subtitle = shadowsWin ? "Les Ombres ont gagné !" : "Les Chercheurs ont gagné !";
+            string subtitle = shadowsWin ? "Les Ombres ont gagné !" : "Les Gardiens ont gagné !";
 
             TargetShowGameOver(conn, won, subtitle);
         }
