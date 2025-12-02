@@ -42,7 +42,6 @@ jobs:
             -Dsonar.sources=Assets ^
             -Dsonar.projectVersion=1.0 ^
             -Dsonar.cs.file.suffixes=.cs ^
-            -Dsonar.exclusions=**/Library/**,**/Temp/**,**/Obj/**,**/Build/**,**/Builds/**,**/*.meta ^
             -Dsonar.sourceEncoding=UTF-8 ^
             -Dsonar.host.url=https://sonarcloud.io ^
             -Dsonar.token=%SONAR_TOKEN%
