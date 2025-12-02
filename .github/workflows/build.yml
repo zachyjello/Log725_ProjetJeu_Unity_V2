@@ -39,5 +39,8 @@ jobs:
             -Dsonar.organization=zachyjello ^
             -Dsonar.projectKey=zachyjello_Log725_ProjetJeu_Unity_V2 ^
             -Dsonar.sources=Assets ^
+            -Dsonar.cs.file.suffixes=.cs ^
+            -Dsonar.exclusions=**/Library/**,**/Temp/**,**/Obj/**,**/Build/**,**/Builds/**,**/*.meta ^
+            -Dsonar.sourceEncoding=UTF-8 ^
             -Dsonar.host.url=https://sonarcloud.io ^
             -Dsonar.token=%SONAR_TOKEN%
