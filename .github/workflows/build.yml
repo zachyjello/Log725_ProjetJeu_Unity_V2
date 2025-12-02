@@ -10,14 +10,11 @@ jobs:
     name: Build and analyze
     runs-on: windows-latest
     steps:
-      - name: Install SonarScanner CLI
-        run: |
-          dotnet tool install --global dotnet-sonarscanner
-
-      - name: Run SonarScanner
+      - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
         run: |
-          dotnet-sonarscanner begin /k:"zachyjello_Log725_ProjetJeu_Unity_V2" /o:"zachyjello" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-          # No build step required for Unity
-          dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"zachyjello_Log725_ProjetJeu_Unity_V2" /o:"zachyjello" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.sources="Assets"
+          # Skip the build step
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
