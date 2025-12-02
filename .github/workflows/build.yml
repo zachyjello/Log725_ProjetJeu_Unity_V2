@@ -10,10 +10,24 @@ jobs:
     name: Build and analyze
     runs-on: windows-latest
     steps:
+      - name: Install SonarQube Cloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          New-Item -Path ${{ runner.temp }}\scanner -ItemType Directory -Force
+          dotnet tool install dotnet-sonarscanner --tool-path ${{ runner.temp }}\scanner
+
+      - name: Verify scanner installation
+        shell: powershell
+        run: |
+          Write-Host "Checking scanner directory contents:"
+          Get-ChildItem -Path ${{ runner.temp }}\scanner
+          Write-Host "Scanner path: ${{ runner.temp }}\scanner"
+
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner.exe begin /k:"zachyjello_Log725_ProjetJeu_Unity_V2" /o:"zachyjello" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.sources="Assets"
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner.exe end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          & "${{ runner.temp }}\scanner\dotnet-sonarscanner.exe" begin /k:"zachyjello_Log725_ProjetJeu_Unity_V2" /o:"zachyjello" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.sources="Assets"
+          & "${{ runner.temp }}\scanner\dotnet-sonarscanner.exe" end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
