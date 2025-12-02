@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// Gestionnaire audio global persistant entre les scènes (musique de fond +  volume des effets sonores)
+// Gestionnaire audio global persistant entre les scï¿½nes (musique de fond +  volume des effets sonores)
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
@@ -13,13 +13,13 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip menuMusic;
     [SerializeField] private AudioClip gameMusic;
 
-    // Clés pour PlayerPrefs
+    // Clï¿½s pour PlayerPrefs
     private const string MUSIC_VOLUME_KEY = "Settings_MusicVolume";
     private const string SFX_VOLUME_KEY = "Settings_SFXVolume";
     private const string MUSIC_MUTE_KEY = "Settings_MusicMute";
     private const string SFX_MUTE_KEY = "Settings_SFXMute";
 
-    // Valeurs par défaut
+    // Valeurs par dï¿½faut
     private float musicVolume = 25f;
     private float sfxVolume = 95f;
     private bool musicMuted = false;
@@ -39,17 +39,17 @@ public class AudioManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // Initialiser les AudioSources si non assignées
+        // Initialiser les AudioSources si non assignï¿½es
         InitializeAudioSources();
 
-        // Charger les paramètres sauvegardés
+        // Charger les paramï¿½tres sauvegardï¿½s
         LoadSettings();
         ApplySettings();
     }
 
     private void Start()
     {
-        // Jouer la musique du menu au démarrage
+        // Jouer la musique du menu au dï¿½marrage
         PlayMenuMusic();
     }
 
@@ -59,7 +59,7 @@ public class AudioManager : MonoBehaviour
 
     private void InitializeAudioSources()
     {
-        // Créer les AudioSources s'ils n'existent pas
+        // Crï¿½er les AudioSources s'ils n'existent pas
         if (musicSource == null)
         {
             musicSource = gameObject.AddComponent<AudioSource>();
@@ -115,31 +115,31 @@ public class AudioManager : MonoBehaviour
         {
             musicSource.clip = menuMusic;
             musicSource.Play();
-            Debug.Log("AudioManager: Musique menu lancée");
+            Debug.Log("AudioManager: Musique menu lancï¿½e");
         }
     }
 
     // Joue la musique de la partie en jeu
     public void PlayGameMusic()
     {
-        // Arrête la musique du menu
+        // Arrï¿½te la musique du menu
         musicSource.Stop();
 
         if (gameMusic != null)
         {
-            // Il y a une musique de jeu assignée = la jouer
+            // Il y a une musique de jeu assignï¿½e = la jouer
             if (musicSource.clip != gameMusic)
             {
                 musicSource.clip = gameMusic;
             }
             musicSource.Play();
-            Debug.Log("AudioManager : musique de jeu lancée");
+            Debug.Log("AudioManager : musique de jeu lancï¿½e");
         }
         else
         {
-            // Pas de musique de jeu assignée = silence total
+            // Pas de musique de jeu assignï¿½e = silence total
             musicSource.clip = null;
-            Debug.Log("AudioManager: pas de musique de jeu assignée, musique stoppée");
+            Debug.Log("AudioManager: pas de musique de jeu assignï¿½e, musique stoppï¿½e");
         }
     }
 

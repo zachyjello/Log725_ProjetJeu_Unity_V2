@@ -4,6 +4,7 @@ using UI.MainMenu;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using System.Collections;
 
 public class GameUIManager : MonoBehaviour
 {
@@ -62,6 +63,7 @@ public class GameUIManager : MonoBehaviour
     private ShadowPlayer localShadowPlayer;
     public bool IsOmbreRole => isOmbreRole;
 
+    private bool canToggleSound = true;
 
     public static GameUIManager Instance { get; private set; }
 
@@ -146,6 +148,9 @@ public class GameUIManager : MonoBehaviour
         quitConfirmButton = root.Q<Button>("quit-confirm-button");
         quitCancelButton = root.Q<Button>("quit-cancel-button");
 
+        if (soundButton != null) {
+            soundButton.clicked += ToggleSound;
+        }
     }
 
     public void ShowChargingMessage(string message)
@@ -488,16 +493,30 @@ public class GameUIManager : MonoBehaviour
         SceneManager.LoadScene("MainMenu");
     }
 
-    private void ToggleSound()
-    {
+    public void ToggleSound() {
+        if (!canToggleSound) return; // Empêche appels multiples pendant le délai, fix bug double appel
+        StartCoroutine(ToggleSoundWithDelay());
+    }
+
+    public IEnumerator ToggleSoundWithDelay(){
+        canToggleSound = false;
+
         isMuted = !isMuted;
 
-        if (backgroundMusic != null)
-            backgroundMusic.mute = isMuted;
+        if (AudioManager.Instance != null){
+            AudioManager.Instance.SetMusicMute(isMuted);
+            AudioManager.Instance.SetSFXMute(isMuted);
+        }
 
-        AudioListener.volume = isMuted ? 0f : 1f;
+        if (soundButton != null) {
+            var buttonColor = isMuted ? Color.red : Color.white;
+            soundButton.style.backgroundColor = new StyleColor(buttonColor);
+        }
 
-        Debug.Log($"Son {(isMuted ? "coupé" : "activé")}");
+        Debug.Log($"[GameUIManager] Son {(isMuted ? "muté" : "activé")}");
+
+        yield return new WaitForSeconds(0.5f);
+        canToggleSound = true;
     }
 
     private void OnSettingsClicked()
