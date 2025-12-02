@@ -112,23 +112,29 @@ public class GameManager : NetworkBehaviour
         ui.UpdateTotalKeys(keysToSpawn);
     }
 
-    private void OnKeysToSpawnChanged(int oldValue, int newValue){
-        if (GameUIManager.Instance != null){
+    private void OnKeysToSpawnChanged(int oldValue, int newValue)
+    {
+        if (GameUIManager.Instance != null)
+        {
             GameUIManager.Instance.UpdateTotalKeys(newValue);
         }
     }
 
-    public void AddKey(){
+    public void AddKey()
+    {
         keysFound++;
         // GameUIManager.Instance.KeyFound();
-        if(keysFound == keysToSpawn){
+        if (keysFound == keysToSpawn)
+        {
             AllKeysFound = true;
         }
     }
 
-    private void OnKeysFoundChanged(int oldValue, int newValue){
+    private void OnKeysFoundChanged(int oldValue, int newValue)
+    {
         Debug.Log($"[GameManager] Keys found updated: {newValue}");
-        if (GameUIManager.Instance != null){
+        if (GameUIManager.Instance != null)
+        {
             GameUIManager.Instance.KeyFound();
         }
     }
@@ -309,6 +315,12 @@ public class GameManager : NetworkBehaviour
         PlayerPrefs.SetString("GameOver_Subtitle", subtitle);
         PlayerPrefs.Save();
 
+        // Détruire l'UI de jeu pour éviter les overlays persistants
+        if (GameUIManager.Instance != null)
+        {
+            Destroy(GameUIManager.Instance.gameObject);
+        }
+
         SceneManager.LoadScene("GameOver");
     }
 
@@ -320,7 +332,7 @@ public class GameManager : NetworkBehaviour
         // Disable movement, input, camera, etc.
         foreach (var comp in localPlayer.GetComponentsInChildren<MonoBehaviour>())
         {
-            if (!(comp is NetworkBehaviour))  
+            if (!(comp is NetworkBehaviour))
                 comp.enabled = false;
         }
     }

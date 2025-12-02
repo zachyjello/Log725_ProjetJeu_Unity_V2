@@ -9,13 +9,13 @@ public class GameOverUI : MonoBehaviour
     [Header("UI Elements")]
     public TextMeshProUGUI titleText;
     public TextMeshProUGUI subtitleText;
-    public Button returnToLobbyButton;
+    public Button quitGameButton;
 
     private void Awake()
     {
         // Setup button listeners
-        if (returnToLobbyButton != null)
-            returnToLobbyButton.onClick.AddListener(OnReturnToLobbyClicked);
+        if (quitGameButton != null)
+            quitGameButton.onClick.AddListener(OnQuitGameClicked);
 
         // Montrer le curseur pour l'UI
         Cursor.lockState = CursorLockMode.None;
@@ -48,22 +48,24 @@ public class GameOverUI : MonoBehaviour
         gameObject.SetActive(true);
     }
 
-    private void OnReturnToLobbyClicked()
+    private void OnQuitGameClicked()
     {
         Debug.Log("Retour au menu de sélection (quitter la partie)");
         if (CustomNetworkRoomManager.Instance != null)
         {
+            Debug.Log("CustomNetworkRoomManager trouvé, appel ReturnToGameSelection");
             CustomNetworkRoomManager.Instance.ReturnToGameSelection();
         }
         else
         {
+            Debug.Log("CustomNetworkRoomManager non trouvé, chargement direct de GameSelectionMenu");
             SceneManager.LoadScene("GameSelectionMenu");
         }
     }
 
     private void OnDestroy()
     {
-        if (returnToLobbyButton != null)
-            returnToLobbyButton.onClick.RemoveListener(OnReturnToLobbyClicked);
+        if (quitGameButton != null)
+            quitGameButton.onClick.RemoveListener(OnQuitGameClicked);
     }
 }
