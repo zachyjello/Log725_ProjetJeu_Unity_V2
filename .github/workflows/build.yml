@@ -15,6 +15,5 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"zachyjello_Log725_ProjetJeu_Unity_V2" /o:"zachyjello" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.sources="Assets"
-          # Skip the build step
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner.exe begin /k:"zachyjello_Log725_ProjetJeu_Unity_V2" /o:"zachyjello" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.sources="Assets"
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner.exe end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
