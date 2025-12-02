@@ -10,32 +10,30 @@ jobs:
     name: Build and analyze
     runs-on: windows-latest
     steps:
-      - name: Build and analyze
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
-        run: |
-          & "${{ runner.temp }}\scanner\dotnet-sonarscanner.exe" begin /k:"zachyjello_Log725_ProjetJeu_Unity_V2" /o:"zachyjello" /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-          dotnet build YourUnityProject.sln
-          & "${{ runner.temp }}\scanner\dotnet-sonarscanner.exe" end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+      - name: Cache SonarQube Cloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}\sonar-scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+
       - name: Install SonarQube Cloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: powershell
         run: |
-          New-Item -Path ${{ runner.temp }}\scanner -ItemType Directory -Force
-          dotnet tool install dotnet-sonarscanner --tool-path ${{ runner.temp }}\scanner
+          New-Item -Path ${{ runner.temp }}\sonar-scanner -ItemType Directory -Force
+          Invoke-WebRequest -Uri "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-windows-x64.zip" -OutFile "${{ runner.temp }}\sonar-scanner.zip"
+          Expand-Archive -Path "${{ runner.temp }}\sonar-scanner.zip" -DestinationPath "${{ runner.temp }}\sonar-scanner"
 
-      - name: Verify scanner installation
-        shell: powershell
-        run: |
-          Write-Host "Checking scanner directory contents:"
-          Get-ChildItem -Path ${{ runner.temp }}\scanner
-          Write-Host "Scanner path: ${{ runner.temp }}\scanner"
-
-      - name: Build and analyze
+      - name: Analyze with SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          & "${{ runner.temp }}\scanner\dotnet-sonarscanner.exe" begin /k:"zachyjello_Log725_ProjetJeu_Unity_V2" /o:"zachyjello" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.sources="Assets"
-          & "${{ runner.temp }}\scanner\dotnet-sonarscanner.exe" end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          ${{ runner.temp }}\sonar-scanner\sonar-scanner-6.2.1.4610-windows-x64\bin\sonar-scanner.bat `
+            -Dsonar.organization=zachyjello `
+            -Dsonar.projectKey=zachyjello_Log725_ProjetJeu_Unity_V2 `
+            -Dsonar.sources=Assets `
+            -Dsonar.host.url=https://sonarcloud.io `
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
