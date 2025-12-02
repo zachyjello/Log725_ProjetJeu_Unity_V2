@@ -82,28 +82,6 @@ public class GameManager : NetworkBehaviour
         }
 
         Instance = this;
-
-
-        // CHECK ICI VIEILLE VERSION
-        //players.AddRange(FindObjectsOfType<MonoBehaviour>().OfType<ShadowPlayer>());
-        //keySpawnLocations.AddRange(FindObjectsOfType<MonoBehaviour>().OfType<KeySpawnLocation>());
-
-        //if (keySpawnLocations.Count < players.Count) throw new Exception("Not enough spawn locations");
-
-        //if (Instance != null && Instance != this)
-        //{
-        //    Destroy(gameObject);
-        //    return;
-        //}
-
-        //for (int i = 0; i < players.Count + 1; i++)
-        //{
-        //    int choice = Random.Range(0, keySpawnLocations.Count);
-        //    Instantiate(keyPrefab, keySpawnLocations[choice].transform.position, keySpawnLocations[choice].transform.rotation);
-        //    keySpawnLocations.Remove(keySpawnLocations[choice]);
-        //}
-        // Debug : afficher combien de joueurs et de spawn locations
-
     }
 
     [Server]
@@ -301,37 +279,49 @@ public class GameManager : NetworkBehaviour
                 rb.velocity = Vector3.zero;
         }
 
-        // Optionally freeze world time
-        Time.timeScale = 0f;
+        foreach (NetworkConnectionToClient conn in NetworkServer.connections.Values)
+        {
+            GamePlayer gp = conn.identity.GetComponent<GamePlayer>();
 
-        // Determine if local player won
-        bool localPlayerWon = DetermineLocalPlayerWin(shadowsWin);
+            bool won = DeterminePlayerWin(gp, shadowsWin);
 
-        PlayerPrefs.SetInt("GameOver_Win", localPlayerWon ? 1 : 0);
-        PlayerPrefs.SetString("GameOver_Subtitle", shadowsWin ? "Les Ombres ont gagné !" : "Les Chercheurs ont gagné !");
+            string subtitle = shadowsWin ? "Les Ombres ont gagné !" : "Les Chercheurs ont gagné !";
+
+            TargetShowGameOver(conn, won, subtitle);
+        }
+    }
+
+    private bool DeterminePlayerWin(GamePlayer gp, bool shadowsWin)
+    {
+        if (shadowsWin && gp.PlayerRole == Role.Ombre)
+            return true;
+        if (!shadowsWin && gp.PlayerRole == Role.Gardien)
+            return true;
+        return false;
+    }
+
+    [TargetRpc]
+    public void TargetShowGameOver(NetworkConnectionToClient target, bool won, string subtitle)
+    {
+        DisableLocalPlayer();
+        // This runs on the client
+        PlayerPrefs.SetInt("GameOver_Win", won ? 1 : 0);
+        PlayerPrefs.SetString("GameOver_Subtitle", subtitle);
         PlayerPrefs.Save();
 
         SceneManager.LoadScene("GameOver");
     }
 
-    private bool DetermineLocalPlayerWin(bool shadowsWin)
+    private void DisableLocalPlayer()
     {
-        // Find all GamePlayers and get the local one
-        GamePlayer[] gamePlayers = FindObjectsOfType<GamePlayer>();
-        foreach (GamePlayer gp in gamePlayers)
+        var localPlayer = NetworkClient.localPlayer;
+        if (localPlayer == null) return;
+
+        // Disable movement, input, camera, etc.
+        foreach (var comp in localPlayer.GetComponentsInChildren<MonoBehaviour>())
         {
-            if (gp.isLocalPlayer)
-            {
-                // If shadows win, and local player is Shadow, then won
-                if (shadowsWin && gp.PlayerRole == Role.Ombre)
-                    return true;
-                // If seekers win, and local player is Gardien, then won
-                if (!shadowsWin && gp.PlayerRole == Role.Gardien)
-                    return true;
-                return false;
-            }
+            if (!(comp is NetworkBehaviour))  
+                comp.enabled = false;
         }
-        // If no local player found, assume lost
-        return false;
     }
 }
