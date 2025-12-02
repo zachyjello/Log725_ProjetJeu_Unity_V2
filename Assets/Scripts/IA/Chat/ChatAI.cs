@@ -12,12 +12,14 @@ public class ChatAI : NetworkBehaviour
     private Transform target;         // cible actuelle (Player Ombre)
     private float soundTimer = 0f;    // chronomètre pour le son
     private Rigidbody rb;             // composant Rigidbody
-    private AudioSource audioSource;
+    
+    [Header("Audio")]
+    public AudioClip chatSound;
+    public string audioEventName = "ChatClip";
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        audioSource = GetComponent<AudioSource>();
 
         // Empêcher le chat de tomber
         if (rb != null)
@@ -39,7 +41,7 @@ public class ChatAI : NetworkBehaviour
             soundTimer = 0f;
 
             // Déclenche le son sur tous les clients
-            RpcPlaySound();
+            CmdPlayChatSound();
             Debug.Log("[ChatAI] Cible détectée (server).");
         }
     }
@@ -86,17 +88,29 @@ public class ChatAI : NetworkBehaviour
             soundTimer += Time.deltaTime;
             if (soundTimer >= soundInterval)
             {
-                RpcPlaySound();
+                CmdPlayChatSound();
                 soundTimer = 0f;
             }
         }
     }
 
+    [Command(requiresAuthority = false)]
+    void CmdPlayChatSound()
+    {
+        // Jouer le son sur tous les clients
+        RpcPlaySound();
+    }
+
     [ClientRpc]
     void RpcPlaySound()
     {
-        // S'exécute sur les clients
-        if (audioSource != null)
-            audioSource.Play();
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(chatSound);
+        }
+        else
+        {
+            Debug.LogWarning("[ChatAI] AudioManager non trouvé, aucun son joué.");
+        }
     }
 }

@@ -174,6 +174,8 @@ MonoBehaviour:
   stopDistance: 1.5
   rotationSpeed: 5
   soundInterval: 3
+  chatSound: {fileID: 8300000, guid: 5ae49d988d45a3c44a643e24fd593b34, type: 3}
+  audioEventName: ChatClip
 --- !u!82 &7026709857889311210
 AudioSource:
   m_ObjectHideFlags: 0
@@ -181,7 +183,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 960197425425937744}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 4010229220829852189, guid: a00c17cd339c45f40bf552f83333ef89,
     type: 2}
